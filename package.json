@@ -1,0 +1,12 @@
+{
+  "name": "ciment-pro-gestion",
+  "version": "1.0.0",
+  "description": "Logiciel professionnel de gestion de vente de ciment, dette CODIMAC, dispatch chauffeurs et rapports",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["ciment", "gestion", "codimac", "togo", "logistique", "btp"],
+  "author": "M. EKOUE",
+  "license": "ISC"
+}

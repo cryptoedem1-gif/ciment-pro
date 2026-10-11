@@ -1,0 +1,265 @@
+{
+  "codePIN": "1331",
+  "stockUsine": {
+    "disponible": 40,
+    "prixAchat": 71000,
+    "prixVente": 75000,
+    "mouvements": [
+      {
+        "id": 1,
+        "date": "10/10/2026",
+        "type": "ENTREE",
+        "tonnage": 40,
+        "sacs": 800,
+        "reference": "DISPO-USINE-01",
+        "motif": "Stock alloué usine disponible pour M. EKOUE",
+        "stockApres": 40
+      }
+    ]
+  },
+  "detteActive": {
+    "fournisseur": "CODIMAC (Comptoir de Distribution de Matériaux de Construction)",
+    "bonCommande": "CD N° 21/1-C-SAR/COD",
+    "dateEmission": "31/08/2026",
+    "tonnageTotal": 100,
+    "prixUnitaireAchat": 71000,
+    "montantTotal": 7100000,
+    "destination": "AKÉPÉ",
+    "typeCiment": "CPJ-45 (Diamond Cement)",
+    "tonnesPayees": 27,
+    "montantPaye": 1937000,
+    "dateDernierReglement": "30/09/2026",
+    "rapTonnes": 73,
+    "rapMontant": 5163000
+  },
+  "recusCODIMAC": [
+    {
+      "id": 1,
+      "numero": "Reçu N° 0000599",
+      "date": "27/05/2026",
+      "montant": 1200000,
+      "mode": "Chèque (CH.T)",
+      "commandes": "CD N°655 (787 900 F) + CD N°678 (412 100 F)",
+      "caisse": "Caisse CODIMAC Agoè Demakpoè",
+      "tonnes": 17
+    },
+    {
+      "id": 2,
+      "numero": "Versement CD-21/1",
+      "date": "30/09/2026",
+      "montant": 1937000,
+      "mode": "Chèque / Virement",
+      "commandes": "CD N° 21/1-C-SAR/COD",
+      "caisse": "Caisse Principale",
+      "tonnes": 27
+    }
+  ],
+  "historiqueCommandes": [
+    {
+      "date": "24/02/2026",
+      "ref": "CD N°655",
+      "tonnage": 30,
+      "pu": 71500,
+      "total": 2145000,
+      "reglements": "3T: 213 100 F (14/04) | 16T: 1 144 000 F (02/05) | 11T: 787 900 F (27/05 CH.T)",
+      "totalPaye": 2145000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "11/03/2026",
+      "ref": "CD N°678",
+      "tonnage": 40,
+      "pu": 71000,
+      "total": 2840000,
+      "reglements": "6T: 412 100 F (27/05 CH.T) | 34T: 2 427 900 F (13/06)",
+      "totalPaye": 2840000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "14/04/2026",
+      "ref": "CD N°736",
+      "tonnage": 40,
+      "pu": 71000,
+      "total": 2840000,
+      "reglements": "1T: 57 100 F (13/06) | 8T: 600 000 F (19/06 CH.T) | 28T: 1 988 000 F (30/06) | 3T: 194 900 F (16/07)",
+      "totalPaye": 2840000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "10/06/2026",
+      "ref": "CD N°800",
+      "tonnage": 50,
+      "pu": 71000,
+      "total": 3550000,
+      "reglements": "5T: 375 100 F (16/07) | 45T: 3 174 900 F (30/07)",
+      "totalPaye": 3550000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "16/07/2026",
+      "ref": "CD N°855",
+      "tonnage": 50,
+      "pu": 71000,
+      "total": 3550000,
+      "reglements": "5T: 375 100 F (30/07) | 45T: 3 174 900 F (14/08)",
+      "totalPaye": 3550000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "18/04/2026",
+      "ref": "CD N° 06/011/MB",
+      "tonnage": 50,
+      "pu": 71000,
+      "total": 3550000,
+      "reglements": "50T: 3 550 000 F (14/05/2026)",
+      "totalPaye": 3550000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "20/05/2026",
+      "ref": "CD N° 05/027/MB",
+      "tonnage": 50,
+      "pu": 71000,
+      "total": 3550000,
+      "reglements": "49T: 3 500 000 F (01/06) | 1T: 50 000 F (02/06)",
+      "totalPaye": 3550000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "03/07/2026",
+      "ref": "CD N° 05/046/MB",
+      "tonnage": 50,
+      "pu": 71000,
+      "total": 3550000,
+      "reglements": "50T: 3 550 000 F (16/07/2026)",
+      "totalPaye": 3550000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "30/07/2026",
+      "ref": "CD N° 04/1-C-SAR/COD",
+      "tonnage": 100,
+      "pu": 71000,
+      "total": 7100000,
+      "reglements": "5T: 375 000 F (14/08) | 50T: 3 550 000 F (29/08) | 20T: 1 420 000 F (16/09) | 25T: 1 755 000 F (30/09)",
+      "totalPaye": 7100000,
+      "rap": 0,
+      "solde": true
+    },
+    {
+      "date": "31/08/2026",
+      "ref": "CD N° 21/1-C-SAR/COD",
+      "tonnage": 100,
+      "pu": 71000,
+      "total": 7100000,
+      "reglements": "27T: 1 937 000 F (30/09/2026)",
+      "totalPaye": 1937000,
+      "rap": 5163000,
+      "solde": false
+    },
+    {
+      "date": "30/09/2026",
+      "ref": "CD N °01/173-C-GGF/COD",
+      "tonnage": 100,
+      "pu": 71000,
+      "total": 7100000,
+      "reglements": "Nouvelle Commande GGF SERVICES (30/09/2026)",
+      "totalPaye": 0,
+      "rap": 7100000,
+      "solde": false,
+      "emetteur": "GGF SERVICES SARL",
+      "destination": "AKEPE",
+      "typeCiment": "CPJ-45"
+    }
+  ],
+  "commandesClients": [
+    {
+      "id": 101,
+      "date": "02/10/2026",
+      "client": "Zio Lodge",
+      "canal": "CHANTIER_USINE",
+      "telephone": "96068238",
+      "destination": "Chantier Zio Lodge",
+      "tonnage": 10,
+      "prixVenteTonne": 75000,
+      "valeurCommande": 750000,
+      "ancienneDette": 91000,
+      "totalVente": 841000,
+      "paiements": [],
+      "statutLivraison": "LIVRE",
+      "chauffeurAssigne": "Camion Usine"
+    },
+    {
+      "id": 102,
+      "date": "04/10/2026",
+      "client": "Plassi",
+      "canal": "SOUS_DISTRIBUTEUR",
+      "telephone": "99229295",
+      "destination": "Dépôt Plassi (Enlèvement autonome)",
+      "tonnage": 10,
+      "prixVenteTonne": 75000,
+      "valeurCommande": 750000,
+      "ancienneDette": 175000,
+      "totalVente": 925000,
+      "paiements": [],
+      "statutLivraison": "AUTONOME_SOUS_DISTRIBUTEUR",
+      "chauffeurAssigne": "Enlèvement autonome (Sous-distributeur)"
+    },
+    {
+      "id": 103,
+      "date": "06/10/2026",
+      "client": "Tonoukouti",
+      "canal": "SOUS_DISTRIBUTEUR",
+      "telephone": "97345617",
+      "destination": "Dépôt Tonoukouti (Enlèvement autonome)",
+      "tonnage": 40,
+      "prixVenteTonne": 75000,
+      "valeurCommande": 3000000,
+      "ancienneDette": 240000,
+      "totalVente": 3240000,
+      "paiements": [],
+      "statutLivraison": "AUTONOME_SOUS_DISTRIBUTEUR",
+      "chauffeurAssigne": "Enlèvement autonome (Sous-distributeur)"
+    },
+    {
+      "id": 104,
+      "date": "08/10/2026",
+      "client": "Ste Essowe et Frères",
+      "canal": "CHANTIER_USINE",
+      "telephone": "91 74 72 40",
+      "destination": "Chantier Ste Essowe et Frères",
+      "tonnage": 55,
+      "prixVenteTonne": 71500,
+      "valeurCommande": 3932500,
+      "ancienneDette": 0,
+      "totalVente": 3932500,
+      "paiements": [],
+      "statutLivraison": "LIVRE",
+      "chauffeurAssigne": "Camion Usine"
+    }
+  ],
+  "rotationsCamions": [
+    {
+      "id": 1,
+      "date": "30/09/2026 14:30",
+      "chauffeur": "Chauffeur Kossi",
+      "telephone": "91 40 50 60",
+      "immatriculation": "TG-8845-BL",
+      "tonnage": 27,
+      "client": "M. EKOUE Dépôt Aképé",
+      "destination": "Aképé Centre",
+      "statut": "LIVRÉ",
+      "commandeId": null
+    }
+  ],
+  "version": 11,
+  "lastUpdated": 1791677240034
+}
