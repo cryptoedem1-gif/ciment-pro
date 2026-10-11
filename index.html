@@ -1915,18 +1915,31 @@
 
       // Stock usine dédié (Option 2)
       stockUsine: {
-        disponible: 40, // 40 Tonnes actuellement à l’usine Diamond Cement
+        disponible: 40,
+        commandeSource: "CD N °01/173-C-GGF/COD (100 Tonnes)",
+        tonnageInitialCommande: 100,
+        tonnageEnleve: 60,
         prixAchat: 71000,
         prixVente: 75000,
         mouvements: [
           {
             id: 1,
-            date: "10/10/2026",
+            date: "30/09/2026",
             type: "ENTREE",
-            tonnage: 40,
-            sacs: 800,
-            reference: "DISPO-USINE-01",
-            motif: "Stock alloué usine disponible pour M. EKOUE",
+            tonnage: 100,
+            sacs: 2000,
+            reference: "CD N °01/173-C-GGF/COD",
+            motif: "Commande 100 Tonnes Diamond Cement",
+            stockApres: 100
+          },
+          {
+            id: 2,
+            date: "06/10/2026",
+            type: "SORTIE",
+            tonnage: 60,
+            sacs: 1200,
+            reference: "LIVR-CUMUL-01",
+            motif: "Enlèvements usine cumulés (60 Tonnes livrées)",
             stockApres: 40
           }
         ]
@@ -2434,6 +2447,25 @@
       if (cmd) {
         cmd.statutLivraison = 'LIVRE';
         cmd.chauffeurAssigne = chNom;
+        cmd.immatriculation = chImmat;
+        cmd.dateLivraison = new Date().toLocaleDateString('fr-FR');
+
+        // DÉBIT AUTOMATIQUE DU STOCK USINE RESTANT (Sur les 40 Tonnes)
+        const tonnesEnlevees = cmd.tonnage || chTonnage || 0;
+        if (DB.stockUsine && tonnesEnlevees > 0) {
+          DB.stockUsine.disponible = Math.max(0, (DB.stockUsine.disponible || 40) - tonnesEnlevees);
+          if (!DB.stockUsine.mouvements) DB.stockUsine.mouvements = [];
+          DB.stockUsine.mouvements.unshift({
+            id: Date.now(),
+            date: new Date().toLocaleDateString('fr-FR'),
+            type: "SORTIE",
+            tonnage: tonnesEnlevees,
+            sacs: tonnesEnlevees * 20,
+            reference: "ENLEV-" + (cmd.id ? cmd.id.toString().slice(-4) : Date.now().toString().slice(-4)),
+            motif: "Enlèvement camion Diamond Cement pour " + cmd.client + " (" + cmd.destination + ")",
+            stockApres: DB.stockUsine.disponible
+          });
+        }
       }
 
       DB.rotationsCamions.unshift({
@@ -2450,8 +2482,9 @@
       });
 
       sauverDB();
+      rafraichirInterface();
       closeModal('modal-dispatch-rapide');
-      alert("✅ Dispatch validé ! La commande de " + cmd.client + " (" + chTonnage + "T) est maintenant livrée.");
+      alert("✅ Enlèvement et livraison validés pour " + (cmd ? cmd.client : "le client") + " (" + chTonnage + " T) !\nLe stock restant à l’usine est désormais de " + (DB.stockUsine ? DB.stockUsine.disponible : 35) + " Tonnes.");
     }
 
     // ==================== GESTION DU STOCK USINE (OPTION 2) ====================
@@ -2717,6 +2750,40 @@
       openModal('modal-paiement-rapide-client');
       document.getElementById('pay-client-select').value = cmdId;
       actualiserApercuPaiementClient();
+    }
+
+    
+    function validerEnlevementDirect(cmdId) {
+      const cmd = DB.commandesClients.find(c => c.id === cmdId);
+      if (!cmd) return;
+      
+      const chauffeur = prompt("Nom du chauffeur / transporteur pour l'enlèvement de " + cmd.client + " (" + cmd.tonnage + " T) :", "Chauffeur Camion Usine");
+      if (chauffeur === null) return; // Annulé
+
+      cmd.statutLivraison = 'LIVRE';
+      cmd.chauffeurAssigne = chauffeur.trim() || "Camion Usine";
+      cmd.dateLivraison = new Date().toLocaleDateString('fr-FR');
+
+      // Débit automatique du stock usine
+      const tonnesEnlevees = cmd.tonnage || 0;
+      if (DB.stockUsine && tonnesEnlevees > 0) {
+        DB.stockUsine.disponible = Math.max(0, (DB.stockUsine.disponible || 40) - tonnesEnlevees);
+        if (!DB.stockUsine.mouvements) DB.stockUsine.mouvements = [];
+        DB.stockUsine.mouvements.unshift({
+          id: Date.now(),
+          date: new Date().toLocaleDateString('fr-FR'),
+          type: "SORTIE",
+          tonnage: tonnesEnlevees,
+          sacs: tonnesEnlevees * 20,
+          reference: "ENLEV-" + (cmd.id ? cmd.id.toString().slice(-4) : "USINE"),
+          motif: "Enlèvement camion pour " + cmd.client + " (" + cmd.destination + ")",
+          stockApres: DB.stockUsine.disponible
+        });
+      }
+
+      sauverDB();
+      rafraichirInterface();
+      alert("✅ Enlèvement réussi !\n- Client : " + cmd.client + " (" + cmd.tonnage + " Tonnes)\n- Statut passé à : LIVRÉ SUR CHANTIER\n- Stock Usine restant : " + (DB.stockUsine ? DB.stockUsine.disponible : 35) + " Tonnes.");
     }
 
     function validerPaiementClient() {
@@ -3465,7 +3532,7 @@
               '<i class="fa-solid fa-phone"></i>' +
             '</button>' +
             (!isSousDist && c.statutLivraison === 'EN_ATTENTE' 
-              ? '<button onclick="ouvrirDispatchPourCommande(' + c.id + ')" class="text-brand-700 hover:text-brand-900 font-bold text-xs"><i class="fa-solid fa-truck"></i> Dispatch</button>'
+              ? '<button onclick="validerEnlevementDirect(' + c.id + ')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] px-2.5 py-1 rounded shadow-xs flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-truck-ramp-box"></i><span>Valider Enlèvement (-' + c.tonnage + 'T)</span></button>'
               : '<span class="text-slate-400 text-[10px]"><i class="fa-solid fa-check"></i> Prêt</span>') +
           '</td>' +
         '</tr>';
