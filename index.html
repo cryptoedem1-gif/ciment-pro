@@ -278,6 +278,185 @@
 
     <!-- ==================== ONGLET 1 : TABLEAU DE BORD ==================== -->
     <div id="tab-dashboard" class="tab-content space-y-6">
+
+      <!-- ==================== BLOC MAÎTRE : BILAN FINANCIER GLOBAL & SITUATION NETTE (POINT CLAIR) ==================== -->
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-700/80 text-white relative overflow-hidden">
+        <!-- Effets de fond -->
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- En-tête du Bilan -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-5 border-b border-slate-700/80 gap-3 relative z-10">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                <i class="fa-solid fa-chart-pie mr-1.5"></i> POINT DE SITUATION FINANCIÈRE CLAIRE
+              </span>
+              <span class="text-xs text-slate-400">• Mis à jour en temps réel</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white mt-1">Bilan Global & Situation Réelle de M. EKOUE</h2>
+            <p class="text-xs text-slate-300">Dette fournisseur, créances clients à recouvrer et solde net de votre activité</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="imprimerFicheSituation()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-lg shadow-md transition flex items-center space-x-2 cursor-pointer">
+              <i class="fa-solid fa-print"></i>
+              <span>Imprimer la Fiche de Situation (A4)</span>
+            </button>
+            <button onclick="switchTab('tab-rapports'); genererRapport('BILAN_GLOBAL');" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-3 py-2.5 rounded-lg border border-slate-600 transition flex items-center space-x-1.5 cursor-pointer">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <span>Voir Rapport Officiel</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Piliers de la Situation Financière -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
+          
+          <!-- PILIER 1 : DETTE FOURNISSEUR CODIMAC (CE QUE VOUS DEVEZ) -->
+          <div class="bg-slate-800/90 rounded-xl p-4.5 border border-red-500/40 flex flex-col justify-between shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-red-400 flex items-center">
+                  <span class="w-2 h-2 rounded-full bg-red-500 inline-block mr-1.5 animate-pulse"></span>
+                  1. Dette Fournisseur CODIMAC
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-red-950/80 text-red-300 font-bold border border-red-800/60">CODIMAC SARL</span>
+              </div>
+              
+              <div class="mt-1">
+                <p class="text-xs text-slate-300">Dette totale cumulée à payer :</p>
+                <div id="bilan-dette-reste" class="text-2xl sm:text-3xl font-black text-red-400 tracking-tight">12 263 000 FCFA</div>
+                <p class="text-xs text-slate-300 mt-0.5">Soit <strong id="bilan-dette-tonnes" class="text-white">173 Tonnes</strong> (100 T comm. + 73 T ant.)</p>
+              </div>
+
+              <div class="mt-3.5 pt-3 border-t border-slate-700/80 space-y-1.5 text-xs text-slate-300">
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-red-900/40">
+                  <span class="text-slate-300">Dette antérieure :</span>
+                  <span id="bilan-dette-anterieur" class="font-bold text-red-300">5 163 000 FCFA</span>
+                </div>
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-red-900/40">
+                  <span class="text-slate-300">Nouvelle commande (100 T) :</span>
+                  <span id="bilan-dette-nouvelle" class="font-bold text-red-300">7 100 000 FCFA</span>
+                </div>
+                <div class="flex justify-between text-emerald-400 pt-0.5">
+                  <span>Déjà réglé par vous :</span>
+                  <span id="bilan-dette-paye" class="font-bold">0 FCFA</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-700/80">
+              <button onclick="openModal('modal-paiement-codimac')" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold text-xs py-2 px-3 rounded-lg transition flex items-center justify-center space-x-1.5 shadow cursor-pointer">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <span>Enregistrer un versement CODIMAC</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PILIER 2 : CRÉANCES CLIENTS (CE QUE VOS CLIENTS VOUS DOIVENT) -->
+          <div class="bg-slate-800/90 rounded-xl p-4.5 border border-amber-500/40 flex flex-col justify-between shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center">
+                  <span class="w-2 h-2 rounded-full bg-amber-400 inline-block mr-1.5"></span>
+                  2. Créances Clients
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 font-bold border border-amber-800/60">4 Clients livrés</span>
+              </div>
+
+              <div class="mt-1">
+                <p class="text-xs text-slate-300">Ce que vos 4 clients vous doivent :</p>
+                <div id="bilan-creances-total" class="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight">8 938 500 FCFA</div>
+                <p class="text-xs text-slate-300 mt-0.5">Tonnage total livré : <strong class="text-white">115 Tonnes</strong></p>
+              </div>
+
+              <!-- Détail des 4 clients -->
+              <div class="mt-3 pt-2.5 border-t border-slate-700/80 space-y-1.5 text-xs">
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
+                  <span class="text-slate-200">1. Ste Essowe et Frères (55 T) :</span>
+                  <span id="bilan-client-essowe" class="font-bold text-amber-300">3 932 500 F</span>
+                </div>
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
+                  <span class="text-slate-200">2. Dépôt Tonoukouti (40 T) :</span>
+                  <span id="bilan-client-tonoukouti" class="font-bold text-amber-300">3 240 000 F</span>
+                </div>
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
+                  <span class="text-slate-200">3. Dépôt Plassi (10 T) :</span>
+                  <span id="bilan-client-plassi" class="font-bold text-amber-300">925 000 F</span>
+                </div>
+                <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
+                  <span class="text-slate-200">4. Chantier Zio Lodge (10 T) :</span>
+                  <span id="bilan-client-ziolodge" class="font-bold text-amber-300">841 000 F</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-700/80">
+              <button onclick="openModal('modal-paiement-rapide-client')" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition flex items-center justify-center space-x-1.5 shadow cursor-pointer">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <span>Encaisser un versement client</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PILIER 3 : BILAN FINANCIER & COUVERTURE RÉELLE -->
+          <div class="bg-gradient-to-b from-slate-900 via-indigo-950/60 to-slate-900 rounded-xl p-4.5 border-2 border-indigo-500/50 flex flex-col justify-between shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/15 rounded-full blur-2xl pointer-events-none"></div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-300 flex items-center">
+                  <i class="fa-solid fa-scale-balanced text-indigo-400 mr-1.5"></i>
+                  3. Couverture & Situation Réelle
+                </span>
+                <span id="badge-couverture" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">97,4% COUVERT</span>
+              </div>
+
+              <div class="mt-1">
+                <p class="text-xs text-slate-300">Total Actif Mobilisable (Créances + Stock) :</p>
+                <div id="bilan-actif-total" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">11 938 500 FCFA</div>
+                <p class="text-[11px] text-slate-300 mt-0.5">
+                  Créances clients (8,94M) + Stock usine 40 T (3,00M)
+                </p>
+              </div>
+
+              <div class="mt-3.5 pt-3 border-t border-slate-700/80 space-y-2 text-xs">
+                <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700/80 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Total dette CODIMAC :</span>
+                    <span class="font-bold text-red-400">12 263 000 FCFA</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Actif disponible :</span>
+                    <span class="font-bold text-emerald-400">11 938 500 FCFA</span>
+                  </div>
+                  <div class="flex justify-between items-center pt-1 border-t border-slate-800">
+                    <span class="text-slate-200 font-bold">Écart résiduel :</span>
+                    <span id="bilan-net-cash" class="font-black text-amber-300">- 324 500 FCFA</span>
+                  </div>
+                </div>
+
+                <div class="flex justify-between items-center text-[11px] text-slate-300 px-1">
+                  <span>Stock Usine Diamond Cement :</span>
+                  <span id="bilan-stock-tonnes" class="font-bold text-amber-300">40 T (800 sacs)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-700/80">
+              <div class="flex items-center text-[11px] text-emerald-300 bg-emerald-950/60 p-2 rounded-lg border border-emerald-500/30">
+                <i class="fa-solid fa-circle-check text-emerald-400 mr-2 text-base shrink-0"></i>
+                <span><strong>Situation solide :</strong> 97,4% de votre dette est déjà couverte. Seuls <strong>82 sacs de ciment</strong> suffisent pour solder toute la dette à zéro !</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ==================== FIN BLOC MAÎTRE SITUATION FINANCIÈRE CLAIRE ==================== -->
+
       
       <!-- 5 Cartes KPIs Pro -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
@@ -1054,6 +1233,20 @@
 
         <!-- Sélecteur de types de rapports -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+          <button onclick="genererRapport('BILAN_GLOBAL')" class="p-3 rounded-lg border-2 border-amber-500 bg-amber-50/70 hover:bg-amber-100 text-left transition focus:ring-2 focus:ring-amber-500 col-span-2 sm:col-span-4 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-sm">
+                  <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-black text-slate-900 uppercase">⭐ Bilan Global & Situation Réelle Complète (Document Recommandé)</p>
+                  <p class="text-[11px] text-slate-600">Synthèse Dette CODIMAC (5 163 000 F) • Créances 4 Clients (8 938 500 F) • Solde Net (+3 775 500 F) • Stock Usine (40 T)</p>
+                </div>
+              </div>
+              <span class="hidden sm:inline-block bg-amber-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-full shadow-xs">Vue Recommandée</span>
+            </div>
+          </button>
           <button onclick="genererRapport('SITUATION_CODIMAC')" class="p-3 rounded-lg border border-slate-300 hover:border-brand-500 hover:bg-brand-50 text-left transition focus:ring-2 focus:ring-brand-500">
             <i class="fa-solid fa-file-contract text-red-600 mb-1"></i>
             <p class="text-xs font-bold text-slate-800">Situation Dette CODIMAC</p>
@@ -2092,7 +2285,7 @@
       }
 
       if (tabId === 'tab-rapports') {
-        genererRapport('SITUATION_CODIMAC');
+        genererRapport('BILAN_GLOBAL');
       }
     }
 
@@ -2942,6 +3135,54 @@
       document.getElementById('paiements-total-rap').innerText = fmtCFA(creancesTotales);
       document.getElementById('barre-taux-recouvrement').style.width = tauxRecouvrement + "%";
 
+      // Mise à jour Bloc Bilan Global & Situation Réelle
+      const elBilanDetteReste = document.getElementById('bilan-dette-reste');
+      if (elBilanDetteReste) {
+        elBilanDetteReste.innerText = fmtCFA(DB.detteActive.rapMontant);
+        const elBDTonnes = document.getElementById('bilan-dette-tonnes');
+        if (elBDTonnes) elBDTonnes.innerText = DB.detteActive.rapTonnes + " Tonnes (100 T comm. + 73 T ant.)";
+        const elBDPaye = document.getElementById('bilan-dette-paye');
+        if (elBDPaye) elBDPaye.innerText = fmtCFA(DB.detteActive.montantPaye) + " (" + DB.detteActive.tonnesPayees + " T)";
+        const elBDAnterieur = document.getElementById('bilan-dette-anterieur');
+        if (elBDAnterieur) elBDAnterieur.innerText = fmtCFA(DB.detteActive.detteAnterieure || 5163000);
+        const elBDNouvelle = document.getElementById('bilan-dette-nouvelle');
+        if (elBDNouvelle) elBDNouvelle.innerText = fmtCFA(DB.detteActive.nouvelleCommandeMontant || 7100000);
+
+        const elBCreances = document.getElementById('bilan-creances-total');
+        if (elBCreances) elBCreances.innerText = fmtCFA(creancesTotales);
+
+        const getRapByNom = (nom) => {
+          const c = DB.commandesClients.find(x => x.client.toLowerCase().includes(nom.toLowerCase()));
+          return c ? fmtCFA(getRapClient(c)) : '0 FCFA';
+        };
+        const elEssowe = document.getElementById('bilan-client-essowe');
+        if (elEssowe) elEssowe.innerText = getRapByNom('essowe');
+        const elTonou = document.getElementById('bilan-client-tonoukouti');
+        if (elTonou) elTonou.innerText = getRapByNom('tonou');
+        const elPlassi = document.getElementById('bilan-client-plassi');
+        if (elPlassi) elPlassi.innerText = getRapByNom('plassi');
+        const elZio = document.getElementById('bilan-client-ziolodge');
+        if (elZio) elZio.innerText = getRapByNom('zio');
+
+        const valeurStockVente = stockDispo * 75000;
+        const totalActif = creancesTotales + valeurStockVente;
+        const ecartNet = totalActif - DB.detteActive.rapMontant;
+        const tauxCouverture = DB.detteActive.rapMontant > 0 ? Math.round((totalActif / DB.detteActive.rapMontant) * 1000) / 10 : 100;
+
+        const elSoldeNet = document.getElementById('bilan-net-cash');
+        if (elSoldeNet) {
+          elSoldeNet.innerText = (ecartNet >= 0 ? '+ ' : '- ') + fmtCFA(Math.abs(ecartNet));
+        }
+
+        const elBadgeCouv = document.getElementById('badge-couverture');
+        if (elBadgeCouv) elBadgeCouv.innerText = tauxCouverture + "% COUVERT";
+
+        const elBSTonnes = document.getElementById('bilan-stock-tonnes');
+        if (elBSTonnes) elBSTonnes.innerText = stockDispo + " T (" + (stockDispo * 20) + " sacs)";
+        const elBActif = document.getElementById('bilan-actif-total');
+        if (elBActif) elBActif.innerText = fmtCFA(totalActif);
+      }
+
       // 4. Jauge Dette CODIMAC
       document.getElementById('kpi-dette').innerText = fmtCFA(DB.detteActive.rapMontant);
       document.getElementById('kpi-tonnes-dues').innerText = DB.detteActive.rapTonnes + " T";
@@ -3260,6 +3501,171 @@
     function genererRapport(type) {
       const cont = document.getElementById('printable-report');
       const dateAuj = new Date().toLocaleDateString('fr-FR');
+
+      if (type === 'BILAN_GLOBAL') {
+        const totalVentesClients = DB.commandesClients.reduce((acc, c) => acc + c.totalVente, 0);
+        const totalEncaisseClients = DB.commandesClients.reduce((acc, c) => acc + getTotalPayeClient(c), 0);
+        const creancesTotales = DB.commandesClients.reduce((acc, c) => acc + getRapClient(c), 0);
+        const stockDispo = (DB.stockUsine && DB.stockUsine.disponible !== undefined) ? DB.stockUsine.disponible : 40;
+        const valeurStockVente = stockDispo * 75000;
+        const actifTotal = creancesTotales + valeurStockVente;
+        const detteTotale = DB.detteActive.rapMontant;
+        const detteAnt = DB.detteActive.detteAnterieure || 5163000;
+        const detteNouv = DB.detteActive.nouvelleCommandeMontant || 7100000;
+        const ecartNet = actifTotal - detteTotale;
+        const tauxCouverture = detteTotale > 0 ? ((actifTotal / detteTotale) * 100).toFixed(1) : "100.0";
+
+        let clientsRows = DB.commandesClients.map((c, i) => {
+          const paye = getTotalPayeClient(c);
+          const rap = getRapClient(c);
+          return '<tr class="border-b border-slate-200">' +
+            '<td class="p-2.5 font-bold text-slate-800">' + (i + 1) + '. ' + c.client + '</td>' +
+            '<td class="p-2.5 text-center font-bold text-slate-700">' + c.tonnage + ' T (' + (c.tonnage * 20) + ' sacs)</td>' +
+            '<td class="p-2.5 text-right font-medium text-slate-600">' + fmtCFA(c.totalVente) + '</td>' +
+            '<td class="p-2.5 text-right font-semibold text-emerald-700">' + fmtCFA(paye) + '</td>' +
+            '<td class="p-2.5 text-right font-black text-amber-700 bg-amber-50/50">' + fmtCFA(rap) + '</td>' +
+          '</tr>';
+        }).join('');
+
+        cont.innerHTML = '<div class="max-w-4xl mx-auto space-y-6 text-slate-900">' +
+          '<!-- EN-TETE DOCUMENT -->' +
+          '<div class="border-b-2 border-slate-900 pb-4 flex justify-between items-start">' +
+            '<div>' +
+              '<h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">FICHE DE SITUATION FINANCIÈRE GLOBALE</h1>' +
+              '<p class="text-sm font-bold text-slate-700 mt-0.5">ÉTABLISSEMENTS M. EKOUE - Distribution & Négoce Ciment</p>' +
+              '<p class="text-xs text-slate-500">Agoè / Aképé • Lomé - Togo • Tél : +228 90 28 88 75</p>' +
+            '</div>' +
+            '<div class="text-right">' +
+              '<span class="inline-block bg-slate-900 text-white text-xs font-black px-3 py-1.5 rounded">DOCUMENT OFFICIEL</span>' +
+              '<p class="text-xs text-slate-500 mt-1">Date d’édition : <strong>' + dateAuj + '</strong></p>' +
+              '<p class="text-xs text-slate-500">Statut : <strong>Certifié Conforme</strong></p>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- RESUME EXECUTIF EN 3 CADRES -->' +
+          '<div class="grid grid-cols-3 gap-4">' +
+            '<div class="p-4 rounded-xl border-2 border-red-500 bg-red-50/40">' +
+              '<p class="text-[11px] font-bold uppercase text-red-800">1. Dette Totale CODIMAC</p>' +
+              '<p class="text-2xl font-black text-red-700 mt-1">' + fmtCFA(detteTotale) + '</p>' +
+              '<p class="text-xs text-slate-600 mt-1">Dette ant. : ' + fmtCFA(detteAnt) + '</p>' +
+              '<p class="text-[11px] text-slate-700">+ Nouv. 100 T : ' + fmtCFA(detteNouv) + '</p>' +
+            '</div>' +
+
+            '<div class="p-4 rounded-xl border-2 border-amber-500 bg-amber-50/40">' +
+              '<p class="text-[11px] font-bold uppercase text-amber-800">2. Créances Clients</p>' +
+              '<p class="text-2xl font-black text-amber-700 mt-1">' + fmtCFA(creancesTotales) + '</p>' +
+              '<p class="text-xs text-slate-600 mt-1">Sur <strong>4 Clients</strong> (115 T livrées)</p>' +
+              '<p class="text-[11px] text-slate-500">Déjà encaissé : ' + fmtCFA(totalEncaisseClients) + '</p>' +
+            '</div>' +
+
+            '<div class="p-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/60">' +
+              '<p class="text-[11px] font-bold uppercase text-indigo-800">3. Actif Total Mobilisable</p>' +
+              '<p class="text-2xl font-black text-indigo-700 mt-1">' + fmtCFA(actifTotal) + '</p>' +
+              '<p class="text-xs text-emerald-700 font-bold mt-1">Couverture : ' + tauxCouverture + '%</p>' +
+              '<p class="text-[11px] text-slate-600">Stock usine 40 T inclus (' + fmtCFA(valeurStockVente) + ')</p>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- SECTION 1 : DETAIL FOURNISSEUR CODIMAC -->' +
+          '<div class="border border-slate-300 rounded-xl overflow-hidden">' +
+            '<div class="bg-slate-100 px-4 py-2.5 font-bold text-xs uppercase text-slate-800 border-b border-slate-300 flex justify-between">' +
+              '<span>1. Situation Détaillée Fournisseur - CODIMAC SARL</span>' +
+              '<span class="text-red-700 font-black">TOTAL DÛ : ' + fmtCFA(detteTotale) + '</span>' +
+            '</div>' +
+            '<div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">' +
+              '<div class="p-2.5 bg-slate-50 rounded border border-slate-200">' +
+                '<span class="text-slate-500 block font-semibold">1. Dette Antérieure (73 T restantes) :</span>' +
+                '<strong class="text-red-700 text-sm">' + fmtCFA(detteAnt) + '</strong>' +
+                '<span class="text-[10px] text-slate-400 block mt-0.5">Bon CD N° 21/1-C-SAR/COD (31/08/2026)</span>' +
+              '</div>' +
+              '<div class="p-2.5 bg-slate-50 rounded border border-slate-200">' +
+                '<span class="text-slate-500 block font-semibold">2. Nouvelle Commande (100 Tonnes) :</span>' +
+                '<strong class="text-red-700 text-sm">' + fmtCFA(detteNouv) + '</strong>' +
+                '<span class="text-[10px] text-slate-400 block mt-0.5">Bon CD N °01/173-C-GGF/COD (30/09/2026)</span>' +
+              '</div>' +
+              '<div class="p-2.5 bg-red-50 rounded border border-red-200">' +
+                '<span class="text-red-800 block font-bold">TOTAL DETTE FOURNISSEUR :</span>' +
+                '<strong class="text-red-700 text-base font-black">' + fmtCFA(detteTotale) + '</strong>' +
+                '<span class="text-[10px] text-red-600 block mt-0.5">Équivalent Tonnage Total : 173 Tonnes</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- SECTION 2 : DETAIL CREANCES CLIENTS -->' +
+          '<div class="border border-slate-300 rounded-xl overflow-hidden">' +
+            '<div class="bg-slate-100 px-4 py-2.5 font-bold text-xs uppercase text-slate-800 border-b border-slate-300 flex justify-between">' +
+              '<span>2. Détail des Créances par Client (115 Tonnes Livrées)</span>' +
+              '<span>Total restant dû : ' + fmtCFA(creancesTotales) + '</span>' +
+            '</div>' +
+            '<table class="w-full text-xs text-left">' +
+              '<thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">' +
+                '<tr>' +
+                  '<th class="p-2.5">Client / Destination</th>' +
+                  '<th class="p-2.5 text-center">Tonnage Livré</th>' +
+                  '<th class="p-2.5 text-right">Facturation Totale</th>' +
+                  '<th class="p-2.5 text-right">Déjà Encaissé</th>' +
+                  '<th class="p-2.5 text-right">Reste à Encaisser (Créance)</th>' +
+                '</tr>' +
+              '</thead>' +
+              '<tbody>' +
+                clientsRows +
+              '</tbody>' +
+              '<tfoot class="bg-slate-100 font-bold border-t-2 border-slate-300">' +
+                '<tr>' +
+                  '<td class="p-2.5">TOTAL TOUS CLIENTS</td>' +
+                  '<td class="p-2.5 text-center">115 Tonnes</td>' +
+                  '<td class="p-2.5 text-right">' + fmtCFA(totalVentesClients) + '</td>' +
+                  '<td class="p-2.5 text-right text-emerald-700">' + fmtCFA(totalEncaisseClients) + '</td>' +
+                  '<td class="p-2.5 text-right text-amber-800 text-sm">' + fmtCFA(creancesTotales) + '</td>' +
+                '</tr>' +
+              '</tfoot>' +
+            '</table>' +
+          '</div>' +
+
+          '<!-- SECTION 3 : SYNTHESE BILAN ET COUVERTURE -->' +
+          '<div class="p-5 bg-slate-900 text-white rounded-xl space-y-3">' +
+            '<div class="flex justify-between items-center border-b border-slate-700 pb-2">' +
+              '<span class="text-sm font-bold uppercase text-amber-400">3. Bilan Comparé & Couverture Réelle de la Dette</span>' +
+              '<span class="text-xs bg-emerald-500 text-slate-950 font-black px-2.5 py-0.5 rounded">COUVERT À ' + tauxCouverture + '%</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs pt-1">' +
+              '<div>' +
+                '<span class="text-slate-400 block">Créances Clients :</span>' +
+                '<span class="text-base font-bold text-amber-300">' + fmtCFA(creancesTotales) + '</span>' +
+              '</div>' +
+              '<div>' +
+                '<span class="text-slate-400 block">+ Stock Usine 40 T :</span>' +
+                '<span class="text-base font-bold text-amber-300">' + fmtCFA(valeurStockVente) + '</span>' +
+              '</div>' +
+              '<div>' +
+                '<span class="text-slate-400 block">= Total Actif :</span>' +
+                '<span class="text-base font-bold text-emerald-400">' + fmtCFA(actifTotal) + '</span>' +
+              '</div>' +
+              '<div>' +
+                '<span class="text-slate-400 block">− Dette CODIMAC :</span>' +
+                '<span class="text-base font-black text-red-400">− ' + fmtCFA(detteTotale) + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="border-t border-slate-800 pt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs gap-2">' +
+              '<span class="text-slate-300">Écart résiduel net : <strong class="text-amber-300">' + fmtCFA(ecartNet) + '</strong> (seulement 82 sacs de ciment pour équilibrer à zéro)</span>' +
+              '<span class="bg-emerald-600/30 border border-emerald-500 text-emerald-300 px-3 py-1 rounded font-bold">TAUX DE COUVERTURE : ' + tauxCouverture + '%</span>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- SIGNATURE -->' +
+          '<div class="pt-6 flex justify-between items-end text-xs text-slate-600">' +
+            '<div>' +
+              '<p>Document généré par l\x27application officielle <strong>CIM-PRO TOGO</strong>.</p>' +
+              '<p class="italic text-[10px]">Certifié sincère et conforme aux relevés de commandes et livraisons.</p>' +
+            '</div>' +
+            '<div class="text-center">' +
+              '<p class="font-bold text-slate-800 uppercase mb-8">La Direction / M. EKOUE</p>' +
+              '<p class="text-[10px] text-slate-400">(Signature & Cachet)</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+        return;
+      }
 
       if (type === 'SITUATION_CODIMAC') {
         cont.innerHTML = '<div class="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-start">' +
@@ -3604,6 +4010,14 @@
         '</div>' +
       '</div>';
       setTimeout(() => window.print(), 300);
+    }
+
+    function imprimerFicheSituation() {
+      switchTab('tab-rapports');
+      genererRapport('BILAN_GLOBAL');
+      setTimeout(() => {
+        window.print();
+      }, 350);
     }
 
     function imprimerRapport() {

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3005;
 const PUBLIC_DIR = __dirname;
 
 const MIME_TYPES = {
