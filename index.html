@@ -1350,25 +1350,53 @@
       </div>
 
       <div class="space-y-3">
+        <!-- Bandeau d'aide détection automatique intelligente -->
+        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-2.5 text-[11px] text-emerald-950 flex items-center justify-between shadow-xs">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div>
+              <span class="font-bold text-emerald-900">Détection Automatique 3-en-1 :</span>
+              <p class="text-[10px] text-emerald-700">Tapez soit le <b>Nom</b>, le <b>N° Téléphone</b> ou la <b>Plaque</b> : les autres champs se remplissent automatiquement !</p>
+            </div>
+          </div>
+          <span id="badge-chauffeur-match" class="hidden text-[10px] text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-full font-black border border-emerald-300 whitespace-nowrap animate-pulse">
+            <i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Reconnu
+          </span>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Nom du Chauffeur Usine *</label>
-            <input type="text" id="disp-chauffeur-nom" placeholder="Ex: Koffi, Yawo..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500">
+            <label class="block text-xs font-semibold text-slate-700 mb-1 flex justify-between items-center">
+              <span>Nom du Chauffeur Usine *</span>
+              <span class="text-[10px] text-slate-400 font-normal">Choix direct</span>
+            </label>
+            <input type="text" id="disp-chauffeur-nom" list="datalist-chauffeurs-nom" oninput="autoDetecterChauffeur('nom')" placeholder="Tapez ex: Kossi, Yawo, Koffi..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-medium">
+            <datalist id="datalist-chauffeurs-nom"></datalist>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">N° Téléphone Chauffeur *</label>
-            <input type="tel" id="disp-chauffeur-tel" placeholder="Ex: 91 23 45 67" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500">
+            <label class="block text-xs font-semibold text-slate-700 mb-1 flex justify-between items-center">
+              <span>N° Téléphone Chauffeur *</span>
+              <span class="text-[10px] text-slate-400 font-normal">Togo 8 chiffres</span>
+            </label>
+            <input type="tel" id="disp-chauffeur-tel" list="datalist-chauffeurs-tel" oninput="autoDetecterChauffeur('tel')" placeholder="Tapez ex: 91 40 50 60..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold">
+            <datalist id="datalist-chauffeurs-tel"></datalist>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Tonnage Chargé (Tonnes) *</label>
-            <input type="number" id="disp-chauffeur-tonnage" value="25" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500 font-bold">
+            <input type="number" id="disp-chauffeur-tonnage" value="25" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-amber-800">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Immatriculation Camion</label>
-            <input type="text" id="disp-chauffeur-immat" placeholder="Ex: TG-1234-AZ" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500 font-mono">
+            <label class="block text-xs font-semibold text-slate-700 mb-1 flex justify-between items-center">
+              <span>Immatriculation Camion</span>
+              <span class="text-[10px] text-slate-400 font-normal">Plaque</span>
+            </label>
+            <input type="text" id="disp-chauffeur-immat" list="datalist-chauffeurs-immat" oninput="autoDetecterChauffeur('immat')" placeholder="Tapez ex: TG-8845-BL..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold uppercase">
+            <datalist id="datalist-chauffeurs-immat"></datalist>
           </div>
         </div>
 
@@ -2381,6 +2409,135 @@
       updateDispatchPreview();
     }
 
+    
+    // ==================== MOTEUR DE DÉTECTION AUTOMATIQUE CHAUFFEURS (3-EN-1) ====================
+    function getTousLesChauffeurs() {
+      const liste = [];
+      const vus = new Set();
+
+      // 1. Répertoire sauvegardé
+      if (DB.repertoireChauffeurs && Array.isArray(DB.repertoireChauffeurs)) {
+        DB.repertoireChauffeurs.forEach(c => {
+          if (c && c.nom) {
+            liste.push({ nom: c.nom, tel: c.tel || '', immat: c.immat || '', tonnage: c.tonnage || 25 });
+            vus.add(c.nom.toLowerCase());
+          }
+        });
+      }
+
+      // 2. Chauffeurs de l'historique des rotations camions
+      if (DB.rotationsCamions && Array.isArray(DB.rotationsCamions)) {
+        DB.rotationsCamions.forEach(r => {
+          if (r && r.chauffeur && !vus.has(r.chauffeur.toLowerCase())) {
+            liste.push({ nom: r.chauffeur, tel: r.telephone || '', immat: r.immatriculation || '', tonnage: r.tonnage || 25 });
+            vus.add(r.chauffeur.toLowerCase());
+          }
+        });
+      }
+
+      // 3. Chauffeurs par défaut de référence
+      const defauts = [
+        { nom: "Chauffeur Kossi", tel: "91 40 50 60", immat: "TG-8845-BL", tonnage: 27 },
+        { nom: "Chauffeur Yawo", tel: "90 12 34 56", immat: "TG-4521-AY", tonnage: 25 },
+        { nom: "Chauffeur Koffi", tel: "92 33 44 55", immat: "TG-6712-BA", tonnage: 30 },
+        { nom: "Chauffeur Mawuli", tel: "98 77 66 55", immat: "TG-9901-AZ", tonnage: 25 },
+        { nom: "Chauffeur Mensah", tel: "93 21 45 67", immat: "TG-3342-BX", tonnage: 20 }
+      ];
+      defauts.forEach(d => {
+        if (!vus.has(d.nom.toLowerCase())) {
+          liste.push(d);
+          vus.add(d.nom.toLowerCase());
+        }
+      });
+
+      return liste;
+    }
+
+    function peuplerDatalistsChauffeurs() {
+      const chauffeurs = getTousLesChauffeurs();
+      const dlNom = document.getElementById('datalist-chauffeurs-nom');
+      const dlTel = document.getElementById('datalist-chauffeurs-tel');
+      const dlImmat = document.getElementById('datalist-chauffeurs-immat');
+
+      if (dlNom) {
+        dlNom.innerHTML = chauffeurs.map(c => '<option value="' + c.nom + '">' + (c.tel ? '(' + c.tel + ' - ' + c.immat + ')' : '') + '</option>').join('');
+      }
+      if (dlTel) {
+        dlTel.innerHTML = chauffeurs.filter(c => c.tel).map(c => '<option value="' + c.tel + '">' + c.nom + ' (' + c.immat + ')</option>').join('');
+      }
+      if (dlImmat) {
+        dlImmat.innerHTML = chauffeurs.filter(c => c.immat).map(c => '<option value="' + c.immat + '">' + c.nom + ' (' + c.tel + ')</option>').join('');
+      }
+    }
+
+    function autoDetecterChauffeur(source) {
+      const inputNom = document.getElementById('disp-chauffeur-nom');
+      const inputTel = document.getElementById('disp-chauffeur-tel');
+      const inputImmat = document.getElementById('disp-chauffeur-immat');
+      const inputTonnage = document.getElementById('disp-chauffeur-tonnage');
+      const badge = document.getElementById('badge-chauffeur-match');
+
+      if (!inputNom || !inputTel || !inputImmat) return;
+
+      const chauffeurs = getTousLesChauffeurs();
+      const cleanDigits = (s) => (s || '').replace(/\D/g, '');
+      const cleanAlpha = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      let match = null;
+
+      if (source === 'nom') {
+        const val = inputNom.value.trim().toLowerCase();
+        if (val.length >= 2) {
+          match = chauffeurs.find(c => c.nom.toLowerCase() === val) || 
+                  chauffeurs.find(c => c.nom.toLowerCase().includes(val));
+          if (match) {
+            inputTel.value = match.tel || inputTel.value;
+            inputImmat.value = match.immat || inputImmat.value;
+            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
+              inputTonnage.value = match.tonnage;
+            }
+          }
+        }
+      } else if (source === 'tel') {
+        const valDigits = cleanDigits(inputTel.value);
+        if (valDigits.length >= 4) {
+          match = chauffeurs.find(c => cleanDigits(c.tel) === valDigits) ||
+                  chauffeurs.find(c => cleanDigits(c.tel).includes(valDigits));
+          if (match) {
+            inputNom.value = match.nom || inputNom.value;
+            inputImmat.value = match.immat || inputImmat.value;
+            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
+              inputTonnage.value = match.tonnage;
+            }
+          }
+        }
+      } else if (source === 'immat') {
+        const valImmat = cleanAlpha(inputImmat.value);
+        if (valImmat.length >= 3) {
+          match = chauffeurs.find(c => cleanAlpha(c.immat) === valImmat) ||
+                  chauffeurs.find(c => cleanAlpha(c.immat).includes(valImmat));
+          if (match) {
+            inputNom.value = match.nom || inputNom.value;
+            inputTel.value = match.tel || inputTel.value;
+            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
+              inputTonnage.value = match.tonnage;
+            }
+          }
+        }
+      }
+
+      if (match) {
+        if (badge) {
+          badge.classList.remove('hidden');
+          badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Reconnu : ' + match.nom;
+        }
+      } else {
+        if (badge) badge.classList.add('hidden');
+      }
+
+      updateDispatchPreview();
+    }
+
     function updateDispatchPreview() {
       const id = Number(document.getElementById('disp-commande-id').value);
       const cmd = DB.commandesClients.find(c => c.id === id);
@@ -2466,6 +2623,27 @@
             stockApres: DB.stockUsine.disponible
           });
         }
+      }
+
+      // Mémoriser automatiquement ce chauffeur dans le répertoire
+      if (!DB.repertoireChauffeurs) DB.repertoireChauffeurs = [];
+      const cleanD = (s) => (s || '').replace(/\D/g, '');
+      const existant = DB.repertoireChauffeurs.find(c => 
+        (chTel && cleanD(c.tel) === cleanD(chTel)) ||
+        (chNom && c.nom.toLowerCase() === chNom.toLowerCase())
+      );
+      if (!existant) {
+        DB.repertoireChauffeurs.push({
+          id: Date.now(),
+          nom: chNom,
+          tel: chTel,
+          immat: chImmat,
+          tonnage: chTonnage
+        });
+      } else {
+        if (chTel) existant.tel = chTel;
+        if (chImmat) existant.immat = chImmat;
+        if (chTonnage) existant.tonnage = chTonnage;
       }
 
       DB.rotationsCamions.unshift({
@@ -3595,7 +3773,14 @@
 
     function ouvrirDispatchPourCommande(cmdId) {
       openModal('modal-dispatch-rapide');
+      peuplerDatalistsChauffeurs();
       document.getElementById('disp-commande-id').value = cmdId;
+      const cmd = DB.commandesClients.find(c => c.id === cmdId);
+      if (cmd && cmd.tonnage) {
+        document.getElementById('disp-chauffeur-tonnage').value = cmd.tonnage;
+      }
+      const badge = document.getElementById('badge-chauffeur-match');
+      if (badge) badge.classList.add('hidden');
       updateDispatchPreview();
     }
 
