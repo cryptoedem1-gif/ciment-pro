@@ -1935,18 +1935,22 @@
       // Dette actuelle active CODIMAC
       detteActive: {
         fournisseur: "CODIMAC (Comptoir de Distribution de Matériaux de Construction)",
-        bonCommande: "CD N° 21/1-C-SAR/COD",
-        dateEmission: "31/08/2026",
-        tonnageTotal: 100,
+        detteAnterieure: 5163000,
+        detteAnterieureRef: "CD N° 21/1-C-SAR/COD (31/08/2026 - 73 T)",
+        detteAnterieureTonnes: 73,
+        nouvelleCommandeMontant: 7100000,
+        nouvelleCommandeRef: "CD N °01/173-C-GGF/COD (30/09/2026 - 100 T)",
+        nouvelleCommandeTonnes: 100,
+        tonnageTotal: 173,
         prixUnitaireAchat: 71000,
-        montantTotal: 7100000,
+        montantTotal: 12263000,
         destination: "AKÉPÉ",
         typeCiment: "CPJ-45 (Diamond Cement)",
-        tonnesPayees: 27,
-        montantPaye: 1937000,
-        dateDernierReglement: "30/09/2026",
-        rapTonnes: 73,
-        rapMontant: 5163000
+        tonnesPayees: 0,
+        montantPaye: 0,
+        dateDernierReglement: "-",
+        rapTonnes: 173,
+        rapMontant: 12263000
       },
 
       // Reçus de paiement CODIMAC
@@ -2074,18 +2078,23 @@
     };
 
     // Migration de version de la DB
-    const DB_VERSION = 11;
+    const DB_VERSION = 12;
     let DB = JSON.parse(localStorage.getItem('ciment_pro_db')) || DONNEES_DEFAUT;
-    if (!DB.version || DB.version < DB_VERSION) {
-      // Conserver les numéros de téléphone si l'utilisateur en a déjà saisi
+    if (!DB.version || DB.version < DB_VERSION || !DB.detteActive || DB.detteActive.montantTotal < 12000000 || !DB.detteActive.detteAnterieure) {
       const savedPhones = {};
       if (DB && DB.commandesClients) {
         DB.commandesClients.forEach(c => {
           if (c.telephone) savedPhones[c.id] = c.telephone;
         });
       }
-      DB = DONNEES_DEFAUT;
+      const savedPaye = (DB && DB.detteActive && DB.detteActive.montantPaye) ? Number(DB.detteActive.montantPaye) : 0;
+      
+      DB.detteActive = Object.assign({}, DONNEES_DEFAUT.detteActive);
+      DB.detteActive.montantPaye = savedPaye;
+      DB.detteActive.rapMontant = Math.max(0, 12263000 - savedPaye);
+      DB.detteActive.rapTonnes = Math.max(0, Math.round((DB.detteActive.rapMontant / 71000) * 10) / 10);
       DB.version = DB_VERSION;
+      
       if (DB.commandesClients) {
         DB.commandesClients.forEach(c => {
           if (savedPhones[c.id]) c.telephone = savedPhones[c.id];
@@ -2165,6 +2174,20 @@
                 break;
               }
             }
+          }
+
+          // Protection stricte de la dette CODIMAC à 12 263 000 FCFA
+          if (localDB && localDB.detteActive) {
+            const paye = Number(localDB.detteActive.montantPaye) || 0;
+            localDB.detteActive.detteAnterieure = 5163000;
+            localDB.detteActive.detteAnterieureTonnes = 73;
+            localDB.detteActive.nouvelleCommandeMontant = 7100000;
+            localDB.detteActive.nouvelleCommandeTonnes = 100;
+            localDB.detteActive.tonnageTotal = 173;
+            localDB.detteActive.montantTotal = 12263000;
+            localDB.detteActive.montantPaye = paye;
+            localDB.detteActive.rapMontant = Math.max(0, 12263000 - paye);
+            localDB.detteActive.rapTonnes = Math.max(0, Math.round((localDB.detteActive.rapMontant / 71000) * 10) / 10);
           }
 
           if (localModifie) {
@@ -3113,9 +3136,21 @@
       document.getElementById('stock-detail-marge').innerText = "+ " + fmtCFA(stockDispo * 4000);
 
       // 2. Bannière Dette CODIMAC & RAP
-      document.getElementById('banner-rap').innerText = fmtCFA(DB.detteActive.rapMontant);
+      const detteAnt = Number(DB.detteActive.detteAnterieure) || 5163000;
+      const detteNouv = Number(DB.detteActive.nouvelleCommandeMontant) || 7100000;
+      const montantPayeDette = Number(DB.detteActive.montantPaye) || 0;
+      const detteTotaleCODIMAC = Math.max(0, (detteAnt + detteNouv) - montantPayeDette);
+
+      DB.detteActive.detteAnterieure = detteAnt;
+      DB.detteActive.nouvelleCommandeMontant = detteNouv;
+      DB.detteActive.montantTotal = detteAnt + detteNouv;
+      DB.detteActive.rapMontant = detteTotaleCODIMAC;
+      DB.detteActive.tonnageTotal = 173;
+      DB.detteActive.rapTonnes = Math.max(0, Math.round((detteTotaleCODIMAC / 71000) * 10) / 10);
+
+      document.getElementById('banner-rap').innerText = fmtCFA(detteTotaleCODIMAC);
       document.getElementById('banner-tonnes').innerText = DB.detteActive.rapTonnes + " T";
-      document.getElementById('badge-dette-tab').innerText = (DB.detteActive.rapMontant / 1000000).toFixed(2) + 'M';
+      document.getElementById('badge-dette-tab').innerText = (detteTotaleCODIMAC / 1000000).toFixed(2) + 'M';
 
       // 3. Totaux Financiers Clients & Trésorerie
       const totalVentesClients = DB.commandesClients.reduce((acc, c) => acc + c.totalVente, 0);
@@ -3138,15 +3173,15 @@
       // Mise à jour Bloc Bilan Global & Situation Réelle
       const elBilanDetteReste = document.getElementById('bilan-dette-reste');
       if (elBilanDetteReste) {
-        elBilanDetteReste.innerText = fmtCFA(DB.detteActive.rapMontant);
+        elBilanDetteReste.innerText = fmtCFA(detteTotaleCODIMAC);
         const elBDTonnes = document.getElementById('bilan-dette-tonnes');
         if (elBDTonnes) elBDTonnes.innerText = DB.detteActive.rapTonnes + " Tonnes (100 T comm. + 73 T ant.)";
         const elBDPaye = document.getElementById('bilan-dette-paye');
-        if (elBDPaye) elBDPaye.innerText = fmtCFA(DB.detteActive.montantPaye) + " (" + DB.detteActive.tonnesPayees + " T)";
+        if (elBDPaye) elBDPaye.innerText = fmtCFA(montantPayeDette) + " (" + DB.detteActive.tonnesPayees + " T)";
         const elBDAnterieur = document.getElementById('bilan-dette-anterieur');
-        if (elBDAnterieur) elBDAnterieur.innerText = fmtCFA(DB.detteActive.detteAnterieure || 5163000);
+        if (elBDAnterieur) elBDAnterieur.innerText = fmtCFA(detteAnt);
         const elBDNouvelle = document.getElementById('bilan-dette-nouvelle');
-        if (elBDNouvelle) elBDNouvelle.innerText = fmtCFA(DB.detteActive.nouvelleCommandeMontant || 7100000);
+        if (elBDNouvelle) elBDNouvelle.innerText = fmtCFA(detteNouv);
 
         const elBCreances = document.getElementById('bilan-creances-total');
         if (elBCreances) elBCreances.innerText = fmtCFA(creancesTotales);
@@ -3166,8 +3201,8 @@
 
         const valeurStockVente = stockDispo * 75000;
         const totalActif = creancesTotales + valeurStockVente;
-        const ecartNet = totalActif - DB.detteActive.rapMontant;
-        const tauxCouverture = DB.detteActive.rapMontant > 0 ? Math.round((totalActif / DB.detteActive.rapMontant) * 1000) / 10 : 100;
+        const ecartNet = totalActif - detteTotaleCODIMAC;
+        const tauxCouverture = detteTotaleCODIMAC > 0 ? Math.round((totalActif / detteTotaleCODIMAC) * 1000) / 10 : 100;
 
         const elSoldeNet = document.getElementById('bilan-net-cash');
         if (elSoldeNet) {
@@ -3184,15 +3219,15 @@
       }
 
       // 4. Jauge Dette CODIMAC
-      document.getElementById('kpi-dette').innerText = fmtCFA(DB.detteActive.rapMontant);
+      document.getElementById('kpi-dette').innerText = fmtCFA(detteTotaleCODIMAC);
       document.getElementById('kpi-tonnes-dues').innerText = DB.detteActive.rapTonnes + " T";
-      const pctDette = Math.min(100, Math.round((DB.detteActive.montantPaye / DB.detteActive.montantTotal) * 1000) / 10);
+      const pctDette = Math.min(100, Math.round((montantPayeDette / (detteAnt + detteNouv)) * 1000) / 10);
       document.getElementById('progress-bar-dette').style.width = pctDette + '%';
       document.getElementById('progress-pct-txt').innerText = pctDette + "% Réglé";
-      document.getElementById('progress-paye-txt').innerText = fmtCFA(DB.detteActive.montantPaye) + " (" + DB.detteActive.tonnesPayees + " Tonnes)";
-      document.getElementById('progress-reste-txt').innerText = fmtCFA(DB.detteActive.rapMontant) + " (" + DB.detteActive.rapTonnes + " Tonnes)";
-      document.getElementById('det-paye').innerText = fmtCFA(DB.detteActive.montantPaye);
-      document.getElementById('det-rap').innerText = fmtCFA(DB.detteActive.rapMontant);
+      document.getElementById('progress-paye-txt').innerText = fmtCFA(montantPayeDette) + " (" + DB.detteActive.tonnesPayees + " Tonnes)";
+      document.getElementById('progress-reste-txt').innerText = fmtCFA(detteTotaleCODIMAC) + " (" + DB.detteActive.rapTonnes + " Tonnes)";
+      document.getElementById('det-paye').innerText = fmtCFA(montantPayeDette);
+      document.getElementById('det-rap').innerText = fmtCFA(detteTotaleCODIMAC);
 
       // 5. Tableau Synthèse Commandes & Créances Clients sur le Tableau de Bord
       const tbAttente = document.getElementById('table-commandes-attente');
@@ -3509,9 +3544,13 @@
         const stockDispo = (DB.stockUsine && DB.stockUsine.disponible !== undefined) ? DB.stockUsine.disponible : 40;
         const valeurStockVente = stockDispo * 75000;
         const actifTotal = creancesTotales + valeurStockVente;
-        const detteTotale = DB.detteActive.rapMontant;
-        const detteAnt = DB.detteActive.detteAnterieure || 5163000;
-        const detteNouv = DB.detteActive.nouvelleCommandeMontant || 7100000;
+        
+        // CALCUL STRICT ET INFALLIBLE : DETTE ANTERIEURE + NOUVELLE COMMANDE - PAYE
+        const detteAnt = Number(DB.detteActive.detteAnterieure) || 5163000;
+        const detteNouv = Number(DB.detteActive.nouvelleCommandeMontant) || 7100000;
+        const montantPaye = Number(DB.detteActive.montantPaye) || 0;
+        const detteTotale = Math.max(0, (detteAnt + detteNouv) - montantPaye);
+        
         const ecartNet = actifTotal - detteTotale;
         const tauxCouverture = detteTotale > 0 ? ((actifTotal / detteTotale) * 100).toFixed(1) : "100.0";
 
@@ -3548,7 +3587,7 @@
               '<p class="text-[11px] font-bold uppercase text-red-800">1. Dette Totale CODIMAC</p>' +
               '<p class="text-2xl font-black text-red-700 mt-1">' + fmtCFA(detteTotale) + '</p>' +
               '<p class="text-xs text-slate-600 mt-1">Dette ant. : ' + fmtCFA(detteAnt) + '</p>' +
-              '<p class="text-[11px] text-slate-700">+ Nouv. 100 T : ' + fmtCFA(detteNouv) + '</p>' +
+              '<p class="text-[11px] text-slate-700 font-bold">+ Nouv. 100 T : ' + fmtCFA(detteNouv) + '</p>' +
             '</div>' +
 
             '<div class="p-4 rounded-xl border-2 border-amber-500 bg-amber-50/40">' +
@@ -3561,16 +3600,16 @@
             '<div class="p-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/60">' +
               '<p class="text-[11px] font-bold uppercase text-indigo-800">3. Actif Total Mobilisable</p>' +
               '<p class="text-2xl font-black text-indigo-700 mt-1">' + fmtCFA(actifTotal) + '</p>' +
-              '<p class="text-xs text-emerald-700 font-bold mt-1">Couverture : ' + tauxCouverture + '%</p>' +
+              '<p class="text-xs text-emerald-700 font-bold mt-1">Couverture Dette : ' + tauxCouverture + '%</p>' +
               '<p class="text-[11px] text-slate-600">Stock usine 40 T inclus (' + fmtCFA(valeurStockVente) + ')</p>' +
             '</div>' +
           '</div>' +
 
           '<!-- SECTION 1 : DETAIL FOURNISSEUR CODIMAC -->' +
           '<div class="border border-slate-300 rounded-xl overflow-hidden">' +
-            '<div class="bg-slate-100 px-4 py-2.5 font-bold text-xs uppercase text-slate-800 border-b border-slate-300 flex justify-between">' +
+            '<div class="bg-slate-100 px-4 py-2.5 font-bold text-xs uppercase text-slate-800 border-b border-slate-300 flex justify-between items-center">' +
               '<span>1. Situation Détaillée Fournisseur - CODIMAC SARL</span>' +
-              '<span class="text-red-700 font-black">TOTAL DÛ : ' + fmtCFA(detteTotale) + '</span>' +
+              '<span class="text-red-700 font-black text-sm">TOTAL DÛ : ' + fmtCFA(detteTotale) + '</span>' +
             '</div>' +
             '<div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">' +
               '<div class="p-2.5 bg-slate-50 rounded border border-slate-200">' +
@@ -3583,10 +3622,10 @@
                 '<strong class="text-red-700 text-sm">' + fmtCFA(detteNouv) + '</strong>' +
                 '<span class="text-[10px] text-slate-400 block mt-0.5">Bon CD N °01/173-C-GGF/COD (30/09/2026)</span>' +
               '</div>' +
-              '<div class="p-2.5 bg-red-50 rounded border border-red-200">' +
-                '<span class="text-red-800 block font-bold">TOTAL DETTE FOURNISSEUR :</span>' +
-                '<strong class="text-red-700 text-base font-black">' + fmtCFA(detteTotale) + '</strong>' +
-                '<span class="text-[10px] text-red-600 block mt-0.5">Équivalent Tonnage Total : 173 Tonnes</span>' +
+              '<div class="p-2.5 bg-red-50 rounded border-2 border-red-300 shadow-xs">' +
+                '<span class="text-red-800 block font-bold uppercase">TOTAL DETTE FOURNISSEUR :</span>' +
+                '<strong class="text-red-700 text-lg font-black">' + fmtCFA(detteTotale) + '</strong>' +
+                '<span class="text-[11px] text-red-600 block mt-0.5 font-bold">Équivalent Tonnage Total : 173 Tonnes</span>' +
               '</div>' +
             '</div>' +
           '</div>' +

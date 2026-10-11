@@ -20,14 +20,14 @@
   "detteActive": {
     "fournisseur": "CODIMAC (Comptoir de Distribution de Matériaux de Construction)",
     "detteAnterieure": 5163000,
-    "detteAnterieureRef": "CD N° 21/1-C-SAR/COD (31/08/2026)",
+    "detteAnterieureRef": "CD N° 21/1-C-SAR/COD (31/08/2026 - 73 T)",
     "detteAnterieureTonnes": 73,
     "nouvelleCommandeMontant": 7100000,
-    "nouvelleCommandeRef": "CD N °01/173-C-GGF/COD (30/09/2026)",
+    "nouvelleCommandeRef": "CD N °01/173-C-GGF/COD (30/09/2026 - 100 T)",
     "nouvelleCommandeTonnes": 100,
     "tonnageTotal": 173,
-    "montantTotal": 12263000,
     "prixUnitaireAchat": 71000,
+    "montantTotal": 12263000,
     "destination": "AKÉPÉ",
     "typeCiment": "CPJ-45 (Diamond Cement)",
     "tonnesPayees": 0,
@@ -264,6 +264,6 @@
       "commandeId": null
     }
   ],
-  "version": 11,
-  "lastUpdated": 1791710199471
+  "version": 12,
+  "lastUpdated": 1791724151732
 }
