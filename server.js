@@ -113,6 +113,7 @@ function fusionnerBases(dbA, dbB) {
   if (!dbB) return JSON.parse(JSON.stringify(dbA));
 
   const fusion = Object.assign({}, dbA, dbB);
+  if ((Number(dbA.codePINDate) || 0) > (Number(dbB.codePINDate) || 0)) { fusion.codePIN = dbA.codePIN; fusion.codePINDate = dbA.codePINDate; }
 
   // 1. Commandes clients
   const cmdsA = Array.isArray(dbA.commandesClients) ? dbA.commandesClients : [];

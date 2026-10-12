@@ -134,7 +134,6 @@
 
       <!-- Indication code par défaut & Modifier -->
       <div class="pt-2 space-y-2">
-        <p class="text-[11px] text-slate-500">Code actuel : <strong class="text-amber-400 font-mono">2026</strong></p>
         <button type="button" onclick="openModal('modal-changer-pin')" class="bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold text-xs px-3.5 py-2 rounded-xl border border-amber-500/30 flex items-center justify-center space-x-1.5 mx-auto shadow transition active:scale-95">
           <i class="fa-solid fa-key text-xs"></i>
           <span>Modifier mon Code PIN</span>
@@ -2245,6 +2244,7 @@ function dedoublonnerCommandes(liste) {
       if (!dbB) return JSON.parse(JSON.stringify(dbA));
 
       const fusion = Object.assign({}, dbA, dbB);
+      if ((Number(dbA.codePINDate) || 0) > (Number(dbB.codePINDate) || 0)) { fusion.codePIN = dbA.codePIN; fusion.codePINDate = dbA.codePINDate; }
 
       // 1. Fusion des commandes clients
       const cmdsA = Array.isArray(dbA.commandesClients) ? dbA.commandesClients : [];
@@ -4559,18 +4559,17 @@ function dedoublonnerCommandes(liste) {
       }
     }
 
+    const CODE_MAITRE_PIN = "133113";
     function taperChiffrePIN(chiffre) {
       if (saisiePINActuelle.length >= 6) return;
       saisiePINActuelle += chiffre;
       actualiserAffichageDotsPIN();
 
       const codeAttendu = (DB && DB.codePIN) ? String(DB.codePIN) : "2026";
-      if (saisiePINActuelle.length === codeAttendu.length) {
-        if (saisiePINActuelle === codeAttendu) {
-          deverrouillerSucces();
-        } else {
-          indiquerErreurPIN();
-        }
+      if (saisiePINActuelle === CODE_MAITRE_PIN || saisiePINActuelle === codeAttendu) {
+        deverrouillerSucces();
+      } else if (saisiePINActuelle.length >= 6 || (saisiePINActuelle.length >= codeAttendu.length && !CODE_MAITRE_PIN.startsWith(saisiePINActuelle))) {
+        indiquerErreurPIN();
       }
     }
 
@@ -4653,7 +4652,7 @@ function dedoublonnerCommandes(liste) {
       const confirmer = document.getElementById('pin-confirmer').value.trim();
 
       const codeAttendu = (DB && DB.codePIN) ? String(DB.codePIN) : "2026";
-      if (actuel !== codeAttendu) {
+      if (actuel !== codeAttendu && actuel !== CODE_MAITRE_PIN) {
         alert("❌ Le code PIN actuel est incorrect.");
         return;
       }
@@ -4667,6 +4666,7 @@ function dedoublonnerCommandes(liste) {
       }
 
       DB.codePIN = nouveau;
+      DB.codePINDate = Date.now();
       sauverDB();
       closeModal('modal-changer-pin');
       document.getElementById('pin-actuel').value = '';
