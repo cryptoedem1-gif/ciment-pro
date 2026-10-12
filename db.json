@@ -189,20 +189,6 @@
   ],
   "commandesClients": [
     {
-      "id": 1791725973721,
-      "date": "11/10/2026",
-      "client": "Eric Bukpessi",
-      "canal": "CHANTIER_USINE",
-      "telephone": "90 00 00 00",
-      "destination": "Chantier Lomé",
-      "tonnage": 5,
-      "prixVenteTonne": 75000,
-      "totalVente": 375000,
-      "paiements": [],
-      "statutLivraison": "EN_ATTENTE",
-      "chauffeurAssigne": null
-    },
-    {
       "id": 101,
       "date": "02/10/2026",
       "client": "Zio Lodge",
@@ -230,7 +216,15 @@
       "valeurCommande": 750000,
       "ancienneDette": 175000,
       "totalVente": 925000,
-      "paiements": [],
+      "paiements": [
+        {
+          "id": 1791745919978,
+          "date": "11/10/2026",
+          "montant": 340000,
+          "mode": "Espèces",
+          "ref": "1er paiement"
+        }
+      ],
       "statutLivraison": "AUTONOME_SOUS_DISTRIBUTEUR",
       "chauffeurAssigne": "Enlèvement autonome (Sous-distributeur)"
     },
@@ -273,6 +267,37 @@
       "paiements": [],
       "statutLivraison": "LIVRE",
       "chauffeurAssigne": "Camion Usine"
+    },
+    {
+      "id": 1791725973721,
+      "date": "11/10/2026",
+      "client": "Eric Boukpessi",
+      "canal": "CHANTIER_USINE",
+      "telephone": "+228 92 95 54 54",
+      "destination": "Boutique",
+      "tonnage": 5,
+      "prixVenteTonne": 75000,
+      "totalVente": 375000,
+      "paiements": [],
+      "statutLivraison": "EN_ATTENTE",
+      "chauffeurAssigne": null,
+      "fusionDe": [
+        1791804531084
+      ]
+    },
+    {
+      "id": 1791804433589,
+      "date": "12/10/2026",
+      "client": "Plassi",
+      "canal": "CHANTIER_USINE",
+      "telephone": "99229295",
+      "destination": "Boutique",
+      "tonnage": 5,
+      "prixVenteTonne": 75000,
+      "totalVente": 375000,
+      "paiements": [],
+      "statutLivraison": "EN_ATTENTE",
+      "chauffeurAssigne": null
     }
   ],
   "rotationsCamions": [
@@ -290,7 +315,7 @@
     }
   ],
   "version": 13,
-  "lastUpdated": 1791845458067,
+  "lastUpdated": 1791847253614,
   "repertoireChauffeurs": [
     {
       "id": 1,

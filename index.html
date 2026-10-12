@@ -2166,6 +2166,78 @@
       }, 4000);
     }
 
+
+// ===== Anti-doublons : fusionne les commandes identiques saisies sur plusieurs appareils =====
+function normNomClient(n) {
+  return String(n || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+}
+function distanceNoms(a, b) {
+  const m = a.length, n = b.length;
+  if (!m || !n) return Math.max(m, n);
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function chiffresTel(t) {
+  let d = String(t || '').replace(/\D/g, '');
+  if (d.startsWith('228') && d.length > 8) d = d.slice(3);
+  return d;
+}
+function telEstFactice(t) {
+  const d = chiffresTel(t);
+  return !d || /^(\d)\1+$/.test(d) || d === '90000000';
+}
+function memeClient(a, b) {
+  const na = normNomClient(a.client), nb = normNomClient(b.client);
+  if (!na || !nb) return false;
+  return na === nb || distanceNoms(na, nb) <= 2;
+}
+function titreNom(n) {
+  return String(n || '').trim().toLowerCase().replace(/(^|\s|-)\S/g, s => s.toUpperCase());
+}
+function estDoublonCommande(a, b) {
+  if (String(a.id) === String(b.id)) return false;
+  if (!memeClient(a, b)) return false;
+  if (Number(a.tonnage) !== Number(b.tonnage)) return false;
+  if (Number(a.totalVente) !== Number(b.totalVente)) return false;
+  const pa = Array.isArray(a.paiements) ? a.paiements.length : 0;
+  const pb = Array.isArray(b.paiements) ? b.paiements.length : 0;
+  const attA = a.statutLivraison === 'EN_ATTENTE', attB = b.statutLivraison === 'EN_ATTENTE';
+  if (!(attA && attB) && !(pa === 0 && pb === 0 && a.statutLivraison === b.statutLivraison)) return false;
+  const fa = telEstFactice(a.telephone), fb = telEstFactice(b.telephone);
+  if (fa || fb) return true; // un des numéros est un provisoire => même commande
+  if (a.date === b.date && chiffresTel(a.telephone) === chiffresTel(b.telephone)) return true; // double envoi
+  return false;
+}
+function dedoublonnerCommandes(liste) {
+  const tries = liste.slice().sort((x, y) => Number(x.id) - Number(y.id));
+  const res = [];
+  tries.forEach(c => {
+    let idx = res.findIndex(r => (r.fusionDe || []).map(String).includes(String(c.id)));
+    if (idx === -1) idx = res.findIndex(r => estDoublonCommande(r, c));
+    if (idx === -1) { res.push(Object.assign({}, c)); return; }
+    const base = res[idx];
+    const reel = !telEstFactice(c.telephone) ? c : base;
+    const paiements = new Map();
+    (base.paiements || []).concat(c.paiements || []).forEach(p => paiements.set(String(p.id || p.date + p.montant), p));
+    res[idx] = Object.assign({}, base, {
+      client: titreNom(c.client),
+      telephone: telEstFactice(reel.telephone) ? (base.telephone || c.telephone) : reel.telephone,
+      destination: (reel.destination && reel.destination !== 'Chantier Lomé') ? reel.destination : (base.destination || c.destination),
+      paiements: Array.from(paiements.values()),
+      chauffeurAssigne: base.chauffeurAssigne || c.chauffeurAssigne || null,
+      fusionDe: Array.from(new Set((base.fusionDe || []).concat([c.id])))
+    });
+  });
+  return res;
+}
+
     // Algorithme de fusion intelligente : Aucune perte de données, fusionne PC et Smartphone
     function fusionnerBases(dbA, dbB) {
       if (!dbA && !dbB) return {};
@@ -2206,7 +2278,7 @@
         }
       });
 
-      fusion.commandesClients = Array.from(mapCmds.values());
+      fusion.commandesClients = dedoublonnerCommandes(Array.from(mapCmds.values()));
 
       // 2. Dette CODIMAC (Garantie à 12 263 000 FCFA avec versements maximisés)
       const detteA = dbA.detteActive || {};
