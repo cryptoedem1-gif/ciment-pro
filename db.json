@@ -1,7 +1,10 @@
 {
-  "codePIN": "1331",
+  "codePIN": "2026",
   "stockUsine": {
     "disponible": 40,
+    "commandeSource": "CD N °01/173-C-GGF/COD (100 Tonnes)",
+    "tonnageInitialCommande": 100,
+    "tonnageEnleve": 60,
     "prixAchat": 71000,
     "prixVente": 75000,
     "mouvements": [
@@ -33,7 +36,7 @@
     "tonnesPayees": 0,
     "montantPaye": 0,
     "dateDernierReglement": "-",
-    "rapTonnes": 173,
+    "rapTonnes": 172.7,
     "rapMontant": 12263000
   },
   "recusCODIMAC": [
@@ -186,11 +189,25 @@
   ],
   "commandesClients": [
     {
+      "id": 1791725973721,
+      "date": "11/10/2026",
+      "client": "Eric Bukpessi",
+      "canal": "CHANTIER_USINE",
+      "telephone": "90 00 00 00",
+      "destination": "Chantier Lomé",
+      "tonnage": 5,
+      "prixVenteTonne": 75000,
+      "totalVente": 375000,
+      "paiements": [],
+      "statutLivraison": "EN_ATTENTE",
+      "chauffeurAssigne": null
+    },
+    {
       "id": 101,
       "date": "02/10/2026",
       "client": "Zio Lodge",
       "canal": "CHANTIER_USINE",
-      "telephone": "96068238",
+      "telephone": "96 06 82 38",
       "destination": "Chantier Zio Lodge",
       "tonnage": 10,
       "prixVenteTonne": 75000,
@@ -206,7 +223,7 @@
       "date": "04/10/2026",
       "client": "Plassi",
       "canal": "SOUS_DISTRIBUTEUR",
-      "telephone": "99229295",
+      "telephone": "99 22 92 95",
       "destination": "Dépôt Plassi (Enlèvement autonome)",
       "tonnage": 10,
       "prixVenteTonne": 75000,
@@ -222,14 +239,22 @@
       "date": "06/10/2026",
       "client": "Tonoukouti",
       "canal": "SOUS_DISTRIBUTEUR",
-      "telephone": "97345617",
+      "telephone": "97 34 56 17",
       "destination": "Dépôt Tonoukouti (Enlèvement autonome)",
-      "tonnage": 40,
+      "tonnage": 60,
       "prixVenteTonne": 75000,
       "valeurCommande": 3000000,
       "ancienneDette": 240000,
-      "totalVente": 3240000,
-      "paiements": [],
+      "totalVente": 4740000,
+      "paiements": [
+        {
+          "id": 1,
+          "date": "06/10/2026",
+          "montant": 1500000,
+          "mode": "Espèces / Virement",
+          "ref": "Paiement 20 Tonnes réglées"
+        }
+      ],
       "statutLivraison": "AUTONOME_SOUS_DISTRIBUTEUR",
       "chauffeurAssigne": "Enlèvement autonome (Sous-distributeur)"
     },
@@ -264,6 +289,43 @@
       "commandeId": null
     }
   ],
-  "version": 12,
-  "lastUpdated": 1791724151732
+  "version": 13,
+  "lastUpdated": 1791845458067,
+  "repertoireChauffeurs": [
+    {
+      "id": 1,
+      "nom": "Chauffeur Kossi",
+      "tel": "91 40 50 60",
+      "immat": "TG-8845-BL",
+      "tonnage": 27
+    },
+    {
+      "id": 2,
+      "nom": "Chauffeur Yawo",
+      "tel": "90 12 34 56",
+      "immat": "TG-4521-AY",
+      "tonnage": 25
+    },
+    {
+      "id": 3,
+      "nom": "Chauffeur Koffi",
+      "tel": "92 33 44 55",
+      "immat": "TG-6712-BA",
+      "tonnage": 30
+    },
+    {
+      "id": 4,
+      "nom": "Chauffeur Mawuli",
+      "tel": "98 77 66 55",
+      "immat": "TG-9901-AZ",
+      "tonnage": 25
+    },
+    {
+      "id": 5,
+      "nom": "Chauffeur Mensah",
+      "tel": "93 21 45 67",
+      "immat": "TG-3342-BX",
+      "tonnage": 20
+    }
+  ]
 }
