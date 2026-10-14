@@ -1331,6 +1331,36 @@
     </div>
   </div>
 
+  <!-- MODAL CHAUFFEURS : ENREGISTREMENT PRÉALABLE DES CONTACTS CHAUFFEURS -->
+  <div id="modal-chauffeur" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 z-[60] hidden no-print">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-3 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+        <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-truck text-amber-600 mr-1.5"></i>Enregistrer un chauffeur</h3>
+        <button type="button" onclick="closeModal('modal-chauffeur')" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form autocomplete="off" onsubmit="enregistrerChauffeur(); return false;" class="space-y-2.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">N° Téléphone (8 chiffres) *</label>
+          <input type="tel" id="ch-tel" name="chf_tel_x1" autocomplete="new-password" inputmode="numeric" placeholder="Ex: 91 40 50 60" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nom du chauffeur *</label>
+          <input type="text" id="ch-nom" name="chf_nom_x1" autocomplete="new-password" placeholder="Nom et prénom" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 font-medium">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Immatriculation du camion (par défaut)</label>
+          <input type="text" id="ch-immat" name="chf_immat_x1" autocomplete="new-password" placeholder="Ex: TG-8845-BL" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 font-mono font-bold uppercase">
+        </div>
+        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs py-2.5 rounded-lg shadow">💾 Enregistrer le chauffeur</button>
+      </form>
+      <div class="border-t border-slate-100 pt-2 space-y-1.5">
+        <p class="text-[11px] font-bold text-slate-600">Chauffeurs enregistrés</p>
+        <div id="liste-chauffeurs-enregistres" class="space-y-1 max-h-44 overflow-y-auto"></div>
+        <button type="button" onclick="purgerChauffeursTest()" class="w-full text-[11px] text-red-600 hover:bg-red-50 border border-red-200 rounded-lg py-1.5 font-bold">🧹 Réinitialiser les chauffeurs de test</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL 1 : CHAUFFEUR EN LIGNE (DISPATCH RAPIDE) -->
   <div id="modal-dispatch-rapide" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden no-print">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
@@ -1357,8 +1387,8 @@
               <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
             <div>
-              <span class="font-bold text-emerald-900">Détection Automatique 3-en-1 :</span>
-              <p class="text-[10px] text-emerald-700">Tapez soit le <b>Nom</b>, le <b>N° Téléphone</b> ou la <b>Plaque</b> : les autres champs se remplissent automatiquement !</p>
+              <span class="font-bold text-emerald-900">Recherche par téléphone :</span>
+              <p class="text-[10px] text-emerald-700">Tapez le <b>N° Téléphone</b> d'un chauffeur <b>enregistré</b> : le nom et la plaque se remplissent automatiquement.</p>
             </div>
           </div>
           <span id="badge-chauffeur-match" class="hidden text-[10px] text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-full font-black border border-emerald-300 whitespace-nowrap animate-pulse">
@@ -1372,16 +1402,14 @@
               <span>Nom du Chauffeur Usine *</span>
               <span class="text-[10px] text-slate-400 font-normal">Choix direct</span>
             </label>
-            <input type="text" id="disp-chauffeur-nom" list="datalist-chauffeurs-nom" oninput="autoDetecterChauffeur('nom')" placeholder="Tapez ex: Kossi, Yawo, Koffi..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-medium">
-            <datalist id="datalist-chauffeurs-nom"></datalist>
+            <input type="text" id="disp-chauffeur-nom" name="disp_nom_x1" autocomplete="new-password" readonly tabindex="-1" placeholder="Rempli automatiquement" class="w-full text-xs px-3 py-2 border border-slate-200 bg-slate-100 text-slate-700 rounded-lg font-medium cursor-not-allowed">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1 flex justify-between items-center">
               <span>N° Téléphone Chauffeur *</span>
               <span class="text-[10px] text-slate-400 font-normal">Togo 8 chiffres</span>
             </label>
-            <input type="tel" id="disp-chauffeur-tel" list="datalist-chauffeurs-tel" oninput="autoDetecterChauffeur('tel')" placeholder="Tapez ex: 91 40 50 60..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold">
-            <datalist id="datalist-chauffeurs-tel"></datalist>
+            <input type="tel" id="disp-chauffeur-tel" name="disp_tel_x1" autocomplete="new-password" inputmode="numeric" oninput="rechercherChauffeurParTel()" placeholder="Tapez le n° du chauffeur (8 chiffres)" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold">
           </div>
         </div>
 
@@ -1395,9 +1423,15 @@
               <span>Immatriculation Camion</span>
               <span class="text-[10px] text-slate-400 font-normal">Plaque</span>
             </label>
-            <input type="text" id="disp-chauffeur-immat" list="datalist-chauffeurs-immat" oninput="autoDetecterChauffeur('immat')" placeholder="Tapez ex: TG-8845-BL..." class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold uppercase">
-            <datalist id="datalist-chauffeurs-immat"></datalist>
+            <input type="text" id="disp-chauffeur-immat" name="disp_immat_x1" autocomplete="new-password" readonly tabindex="-1" placeholder="Rempli automatiquement" class="w-full text-xs px-3 py-2 border border-slate-200 bg-slate-100 text-slate-700 rounded-lg font-mono font-bold uppercase cursor-not-allowed">
           </div>
+        </div>
+
+        <button type="button" id="btn-gerer-chauffeurs" onclick="ouvrirModalChauffeur('')" class="w-full text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg py-1.5">👥 Gérer / Ajouter des chauffeurs</button>
+        <!-- Chauffeur inconnu : proposition d'enregistrement rapide -->
+        <div id="alerte-chauffeur-inconnu" class="hidden p-2.5 bg-red-50 border border-red-300 rounded-xl text-xs flex items-center justify-between gap-2">
+          <span class="text-red-800 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Chauffeur non enregistré</span>
+          <button type="button" onclick="ouvrirModalChauffeur(document.getElementById('disp-chauffeur-tel').value)" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2.5 py-1.5 rounded-lg whitespace-nowrap">➕ Enregistrer ce chauffeur</button>
         </div>
 
         <div>
@@ -2323,6 +2357,28 @@ function dedoublonnerCommandes(liste) {
       chB.forEach(c => mapCh.set(String(c.nom || c.tel).toLowerCase(), c));
       fusion.repertoireChauffeurs = Array.from(mapCh.values());
 
+      // 5. Table CHAUFFEURS (clé unique = téléphone) avec suppressions/purges propagées
+      (function () {
+        const resetMax = Math.max(Number(dbA.chauffeursReset) || 0, Number(dbB.chauffeursReset) || 0);
+        const suppr = Object.assign({}, dbA.chauffeursSupprimes || {});
+        Object.keys(dbB.chauffeursSupprimes || {}).forEach(k => {
+          suppr[k] = Math.max(Number(suppr[k]) || 0, Number(dbB.chauffeursSupprimes[k]) || 0);
+        });
+        const mapChf = new Map();
+        [].concat(dbA.chauffeurs || [], dbB.chauffeurs || []).forEach(c => {
+          if (!c || !c.telephone) return;
+          const ts = Number(c.maj) || Number(c.date_creation) || 0;
+          if (ts <= resetMax) return;
+          if (ts <= (Number(suppr[c.telephone]) || 0)) return;
+          const prev = mapChf.get(c.telephone);
+          if (!prev || ts >= (Number(prev.maj) || Number(prev.date_creation) || 0)) mapChf.set(c.telephone, c);
+        });
+        fusion.chauffeurs = Array.from(mapChf.values());
+        fusion.chauffeursReset = resetMax;
+        fusion.chauffeursSupprimes = suppr;
+      })();
+
+
       fusion.lastUpdated = Date.now();
       return fusion;
     }
@@ -2594,132 +2650,160 @@ function dedoublonnerCommandes(liste) {
     }
 
     
-    // ==================== MOTEUR DE DÉTECTION AUTOMATIQUE CHAUFFEURS (3-EN-1) ====================
-    function getTousLesChauffeurs() {
-      const liste = [];
-      const vus = new Set();
+    // ==================== MODULE CHAUFFEURS (table distincte, clé unique = téléphone) ====================
+    // Modèle Chauffeur : { id, telephone (8 chiffres, unique), nom_chauffeur, immatriculation, date_creation }
+    function normaliserTelChauffeur(t) {
+      let d = String(t || '').replace(/\D/g, '');
+      if (d.startsWith('228') && d.length > 8) d = d.slice(3);
+      return d;
+    }
+    function formaterTelChauffeur(k) {
+      return String(k || '').replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+    }
+    function escChf(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
+    function tableChauffeurs() {
+      if (!Array.isArray(DB.chauffeurs)) DB.chauffeurs = [];
+      return DB.chauffeurs;
+    }
+    // Recherche STRICTE et EXACTE par téléphone dans la table Chauffeur uniquement
+    function trouverChauffeurParTel(tel) {
+      const k = normaliserTelChauffeur(tel);
+      if (k.length !== 8) return null;
+      return tableChauffeurs().find(c => c.telephone === k) || null;
+    }
 
-      // 1. Répertoire sauvegardé
-      if (DB.repertoireChauffeurs && Array.isArray(DB.repertoireChauffeurs)) {
-        DB.repertoireChauffeurs.forEach(c => {
-          if (c && c.nom) {
-            liste.push({ nom: c.nom, tel: c.tel || '', immat: c.immat || '', tonnage: c.tonnage || 25 });
-            vus.add(c.nom.toLowerCase());
-          }
-        });
-      }
-
-      // 2. Chauffeurs de l'historique des rotations camions
-      if (DB.rotationsCamions && Array.isArray(DB.rotationsCamions)) {
-        DB.rotationsCamions.forEach(r => {
-          if (r && r.chauffeur && !vus.has(r.chauffeur.toLowerCase())) {
-            liste.push({ nom: r.chauffeur, tel: r.telephone || '', immat: r.immatriculation || '', tonnage: r.tonnage || 25 });
-            vus.add(r.chauffeur.toLowerCase());
-          }
-        });
-      }
-
-      // 3. Chauffeurs par défaut de référence
-      const defauts = [
-        { nom: "Chauffeur Kossi", tel: "91 40 50 60", immat: "TG-8845-BL", tonnage: 27 },
-        { nom: "Chauffeur Yawo", tel: "90 12 34 56", immat: "TG-4521-AY", tonnage: 25 },
-        { nom: "Chauffeur Koffi", tel: "92 33 44 55", immat: "TG-6712-BA", tonnage: 30 },
-        { nom: "Chauffeur Mawuli", tel: "98 77 66 55", immat: "TG-9901-AZ", tonnage: 25 },
-        { nom: "Chauffeur Mensah", tel: "93 21 45 67", immat: "TG-3342-BX", tonnage: 20 }
-      ];
-      defauts.forEach(d => {
-        if (!vus.has(d.nom.toLowerCase())) {
-          liste.push(d);
-          vus.add(d.nom.toLowerCase());
-        }
+    function reinitialiserSaisieChauffeur() {
+      ['disp-chauffeur-tel', 'disp-chauffeur-nom', 'disp-chauffeur-immat'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
       });
-
-      return liste;
-    }
-
-    function peuplerDatalistsChauffeurs() {
-      const chauffeurs = getTousLesChauffeurs();
-      const dlNom = document.getElementById('datalist-chauffeurs-nom');
-      const dlTel = document.getElementById('datalist-chauffeurs-tel');
-      const dlImmat = document.getElementById('datalist-chauffeurs-immat');
-
-      if (dlNom) {
-        dlNom.innerHTML = chauffeurs.map(c => '<option value="' + c.nom + '">' + (c.tel ? '(' + c.tel + ' - ' + c.immat + ')' : '') + '</option>').join('');
-      }
-      if (dlTel) {
-        dlTel.innerHTML = chauffeurs.filter(c => c.tel).map(c => '<option value="' + c.tel + '">' + c.nom + ' (' + c.immat + ')</option>').join('');
-      }
-      if (dlImmat) {
-        dlImmat.innerHTML = chauffeurs.filter(c => c.immat).map(c => '<option value="' + c.immat + '">' + c.nom + ' (' + c.tel + ')</option>').join('');
-      }
-    }
-
-    function autoDetecterChauffeur(source) {
-      const inputNom = document.getElementById('disp-chauffeur-nom');
-      const inputTel = document.getElementById('disp-chauffeur-tel');
-      const inputImmat = document.getElementById('disp-chauffeur-immat');
-      const inputTonnage = document.getElementById('disp-chauffeur-tonnage');
+      const al = document.getElementById('alerte-chauffeur-inconnu');
+      if (al) al.classList.add('hidden');
       const badge = document.getElementById('badge-chauffeur-match');
+      if (badge) badge.classList.add('hidden');
+    }
 
-      if (!inputNom || !inputTel || !inputImmat) return;
+    // Appelée à chaque frappe dans le champ téléphone du chauffeur
+    function rechercherChauffeurParTel() {
+      const inputTel = document.getElementById('disp-chauffeur-tel');
+      const inputNom = document.getElementById('disp-chauffeur-nom');
+      const inputImmat = document.getElementById('disp-chauffeur-immat');
+      const badge = document.getElementById('badge-chauffeur-match');
+      const alerte = document.getElementById('alerte-chauffeur-inconnu');
+      if (!inputTel || !inputNom || !inputImmat) return;
 
-      const chauffeurs = getTousLesChauffeurs();
-      const cleanDigits = (s) => (s || '').replace(/\D/g, '');
-      const cleanAlpha = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const k = normaliserTelChauffeur(inputTel.value);
+      inputNom.value = '';
+      inputImmat.value = '';
+      if (badge) badge.classList.add('hidden');
+      if (alerte) alerte.classList.add('hidden');
 
-      let match = null;
-
-      if (source === 'nom') {
-        const val = inputNom.value.trim().toLowerCase();
-        if (val.length >= 2) {
-          match = chauffeurs.find(c => c.nom.toLowerCase() === val) || 
-                  chauffeurs.find(c => c.nom.toLowerCase().includes(val));
-          if (match) {
-            inputTel.value = match.tel || inputTel.value;
-            inputImmat.value = match.immat || inputImmat.value;
-            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
-              inputTonnage.value = match.tonnage;
-            }
+      if (k.length >= 8) {
+        const ch = trouverChauffeurParTel(k);
+        if (ch) {
+          // CAS A : chauffeur trouvé => auto-complétion Nom + Immatriculation
+          inputNom.value = ch.nom_chauffeur;
+          inputImmat.value = ch.immatriculation || '';
+          if (badge) {
+            badge.classList.remove('hidden');
+            badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Reconnu : ' + escChf(ch.nom_chauffeur);
           }
-        }
-      } else if (source === 'tel') {
-        const valDigits = cleanDigits(inputTel.value);
-        if (valDigits.length >= 4) {
-          match = chauffeurs.find(c => cleanDigits(c.tel) === valDigits) ||
-                  chauffeurs.find(c => cleanDigits(c.tel).includes(valDigits));
-          if (match) {
-            inputNom.value = match.nom || inputNom.value;
-            inputImmat.value = match.immat || inputImmat.value;
-            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
-              inputTonnage.value = match.tonnage;
-            }
-          }
-        }
-      } else if (source === 'immat') {
-        const valImmat = cleanAlpha(inputImmat.value);
-        if (valImmat.length >= 3) {
-          match = chauffeurs.find(c => cleanAlpha(c.immat) === valImmat) ||
-                  chauffeurs.find(c => cleanAlpha(c.immat).includes(valImmat));
-          if (match) {
-            inputNom.value = match.nom || inputNom.value;
-            inputTel.value = match.tel || inputTel.value;
-            if (match.tonnage && (!inputTonnage.value || inputTonnage.value === '25')) {
-              inputTonnage.value = match.tonnage;
-            }
-          }
+        } else if (alerte) {
+          // CAS B : chauffeur inconnu => message + enregistrement rapide
+          alerte.classList.remove('hidden');
         }
       }
-
-      if (match) {
-        if (badge) {
-          badge.classList.remove('hidden');
-          badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Reconnu : ' + match.nom;
-        }
-      } else {
-        if (badge) badge.classList.add('hidden');
-      }
-
       updateDispatchPreview();
+    }
+
+    function ouvrirModalChauffeur(telPrefill) {
+      openModal('modal-chauffeur');
+      const k = normaliserTelChauffeur(telPrefill);
+      document.getElementById('ch-nom').value = '';
+      document.getElementById('ch-tel').value = k ? formaterTelChauffeur(k) : '';
+      document.getElementById('ch-immat').value = '';
+      rendreListeChauffeurs();
+      setTimeout(() => { const f = document.getElementById(k ? 'ch-nom' : 'ch-tel'); if (f) f.focus(); }, 80);
+    }
+
+    function enregistrerChauffeur() {
+      const nom = document.getElementById('ch-nom').value.trim();
+      const k = normaliserTelChauffeur(document.getElementById('ch-tel').value);
+      const immat = document.getElementById('ch-immat').value.trim().toUpperCase();
+      if (!nom) { alert("Veuillez saisir le nom du chauffeur."); return; }
+      if (k.length !== 8) { alert("Le numéro de téléphone doit comporter 8 chiffres (Togo)."); return; }
+
+      const table = tableChauffeurs();
+      const existant = table.find(c => c.telephone === k);
+      const maintenant = Date.now();
+      if (existant) {
+        existant.nom_chauffeur = nom;
+        existant.immatriculation = immat;
+        existant.maj = maintenant;
+      } else {
+        table.push({ id: maintenant, telephone: k, nom_chauffeur: nom, immatriculation: immat, date_creation: maintenant });
+      }
+      if (DB.chauffeursSupprimes) delete DB.chauffeursSupprimes[k];
+      sauverDB();
+
+      document.getElementById('ch-nom').value = '';
+      document.getElementById('ch-tel').value = '';
+      document.getElementById('ch-immat').value = '';
+      rendreListeChauffeurs();
+
+      // Si le formulaire de commande/dispatch est ouvert : on y reporte le chauffeur enregistré
+      const dispatch = document.getElementById('modal-dispatch-rapide');
+      if (dispatch && !dispatch.classList.contains('hidden')) {
+        document.getElementById('disp-chauffeur-tel').value = formaterTelChauffeur(k);
+        rechercherChauffeurParTel();
+        closeModal('modal-chauffeur');
+      }
+    }
+
+    function supprimerChauffeur(id) {
+      const table = tableChauffeurs();
+      const ch = table.find(c => c.id === id);
+      if (!ch) return;
+      if (!confirm("Supprimer le chauffeur " + ch.nom_chauffeur + " (" + formaterTelChauffeur(ch.telephone) + ") ?\nLes livraisons et ventes passées ne sont pas modifiées.")) return;
+      DB.chauffeurs = table.filter(c => c.id !== id);
+      if (!DB.chauffeursSupprimes) DB.chauffeursSupprimes = {};
+      DB.chauffeursSupprimes[ch.telephone] = Date.now();
+      sauverDB();
+      rendreListeChauffeurs();
+      rechercherChauffeurParTel();
+    }
+
+    function rendreListeChauffeurs() {
+      const cont = document.getElementById('liste-chauffeurs-enregistres');
+      if (!cont) return;
+      const table = tableChauffeurs();
+      if (!table.length) {
+        cont.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-3">Aucun chauffeur enregistré.</p>';
+        return;
+      }
+      cont.innerHTML = table.slice().sort((a, b) => a.nom_chauffeur.localeCompare(b.nom_chauffeur)).map(c =>
+        '<div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs">' +
+          '<div><b class="text-slate-900">' + escChf(c.nom_chauffeur) + '</b>' +
+          '<span class="text-slate-500 font-mono ml-2">' + escChf(formaterTelChauffeur(c.telephone)) + '</span>' +
+          (c.immatriculation ? '<span class="ml-2 text-amber-800 font-mono font-bold">' + escChf(c.immatriculation) + '</span>' : '') + '</div>' +
+          '<button type="button" onclick="supprimerChauffeur(' + c.id + ')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>' +
+        '</div>').join('');
+    }
+
+    // Purge des chauffeurs de test : ne touche NI aux ventes, NI au stock, NI à l'historique des livraisons
+    function purgerChauffeursTest() {
+      const n = tableChauffeurs().length;
+      if (!confirm("Réinitialiser TOUS les chauffeurs enregistrés (" + n + ") ?\nLes ventes, paiements, stock et livraisons déjà effectuées ne sont pas modifiés.")) return;
+      DB.chauffeurs = [];
+      DB.chauffeursSupprimes = {};
+      DB.chauffeursReset = Date.now();
+      DB.repertoireChauffeurs = [];
+      sauverDB();
+      rendreListeChauffeurs();
+      reinitialiserSaisieChauffeur();
+      alert("✅ Répertoire chauffeurs remis à zéro. Vous pouvez enregistrer vos vrais chauffeurs.");
     }
 
     function updateDispatchPreview() {
@@ -2779,6 +2863,12 @@ function dedoublonnerCommandes(liste) {
       const chImmat = document.getElementById('disp-chauffeur-immat').value.trim() || "Camion Usine";
       const cmdId = Number(document.getElementById('disp-commande-id').value);
 
+      const chRef = trouverChauffeurParTel(chTel);
+      if (!chRef) {
+        alert("Chauffeur non enregistré. Enregistrez d'abord ce chauffeur (nom, téléphone, plaque).");
+        ouvrirModalChauffeur(chTel);
+        return;
+      }
       if (!chNom || !chTel || !cmdId) {
         alert("Veuillez renseigner le nom, téléphone du chauffeur et sélectionner une commande.");
         return;
@@ -2807,27 +2897,6 @@ function dedoublonnerCommandes(liste) {
             stockApres: DB.stockUsine.disponible
           });
         }
-      }
-
-      // Mémoriser automatiquement ce chauffeur dans le répertoire
-      if (!DB.repertoireChauffeurs) DB.repertoireChauffeurs = [];
-      const cleanD = (s) => (s || '').replace(/\D/g, '');
-      const existant = DB.repertoireChauffeurs.find(c => 
-        (chTel && cleanD(c.tel) === cleanD(chTel)) ||
-        (chNom && c.nom.toLowerCase() === chNom.toLowerCase())
-      );
-      if (!existant) {
-        DB.repertoireChauffeurs.push({
-          id: Date.now(),
-          nom: chNom,
-          tel: chTel,
-          immat: chImmat,
-          tonnage: chTonnage
-        });
-      } else {
-        if (chTel) existant.tel = chTel;
-        if (chImmat) existant.immat = chImmat;
-        if (chTonnage) existant.tonnage = chTonnage;
       }
 
       DB.rotationsCamions.unshift({
@@ -3957,7 +4026,7 @@ function dedoublonnerCommandes(liste) {
 
     function ouvrirDispatchPourCommande(cmdId) {
       openModal('modal-dispatch-rapide');
-      peuplerDatalistsChauffeurs();
+      reinitialiserSaisieChauffeur();
       document.getElementById('disp-commande-id').value = cmdId;
       const cmd = DB.commandesClients.find(c => c.id === cmdId);
       if (cmd && cmd.tonnage) {

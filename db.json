@@ -315,42 +315,9 @@
     }
   ],
   "version": 13,
-  "lastUpdated": 1791847253614,
-  "repertoireChauffeurs": [
-    {
-      "id": 1,
-      "nom": "Chauffeur Kossi",
-      "tel": "91 40 50 60",
-      "immat": "TG-8845-BL",
-      "tonnage": 27
-    },
-    {
-      "id": 2,
-      "nom": "Chauffeur Yawo",
-      "tel": "90 12 34 56",
-      "immat": "TG-4521-AY",
-      "tonnage": 25
-    },
-    {
-      "id": 3,
-      "nom": "Chauffeur Koffi",
-      "tel": "92 33 44 55",
-      "immat": "TG-6712-BA",
-      "tonnage": 30
-    },
-    {
-      "id": 4,
-      "nom": "Chauffeur Mawuli",
-      "tel": "98 77 66 55",
-      "immat": "TG-9901-AZ",
-      "tonnage": 25
-    },
-    {
-      "id": 5,
-      "nom": "Chauffeur Mensah",
-      "tel": "93 21 45 67",
-      "immat": "TG-3342-BX",
-      "tonnage": 20
-    }
-  ]
+  "lastUpdated": 1791964336861,
+  "repertoireChauffeurs": [],
+  "chauffeurs": [],
+  "chauffeursSupprimes": {},
+  "chauffeursReset": 1791964336861
 }

@@ -194,6 +194,28 @@ function fusionnerBases(dbA, dbB) {
   chB.forEach(c => mapCh.set(String(c.nom || c.tel).toLowerCase(), c));
   fusion.repertoireChauffeurs = Array.from(mapCh.values());
 
+  // 5. Table CHAUFFEURS (clé unique = téléphone) avec suppressions/purges propagées
+  (function () {
+    const resetMax = Math.max(Number(dbA.chauffeursReset) || 0, Number(dbB.chauffeursReset) || 0);
+    const suppr = Object.assign({}, dbA.chauffeursSupprimes || {});
+    Object.keys(dbB.chauffeursSupprimes || {}).forEach(k => {
+      suppr[k] = Math.max(Number(suppr[k]) || 0, Number(dbB.chauffeursSupprimes[k]) || 0);
+    });
+    const mapChf = new Map();
+    [].concat(dbA.chauffeurs || [], dbB.chauffeurs || []).forEach(c => {
+      if (!c || !c.telephone) return;
+      const ts = Number(c.maj) || Number(c.date_creation) || 0;
+      if (ts <= resetMax) return;
+      if (ts <= (Number(suppr[c.telephone]) || 0)) return;
+      const prev = mapChf.get(c.telephone);
+      if (!prev || ts >= (Number(prev.maj) || Number(prev.date_creation) || 0)) mapChf.set(c.telephone, c);
+    });
+    fusion.chauffeurs = Array.from(mapChf.values());
+    fusion.chauffeursReset = resetMax;
+    fusion.chauffeursSupprimes = suppr;
+  })();
+
+
   fusion.lastUpdated = Date.now();
   return fusion;
 }
@@ -309,6 +331,20 @@ const server = http.createServer((req, res) => {
       isCloud: !!IS_RENDER,
       time: new Date().toLocaleTimeString('fr-FR')
     }));
+    return;
+  }
+
+  // Route API : recherche STRICTE d'un chauffeur par téléphone (table Chauffeur uniquement)
+  if (reqUrl === '/api/chauffeurs' && req.method === 'GET') {
+    const q = new URL(req.url, 'http://x').searchParams.get('tel') || '';
+    let k = q.replace(/\D/g, '');
+    if (k.startsWith('228') && k.length > 8) k = k.slice(3);
+    const db = lireDB() || {};
+    const liste = Array.isArray(db.chauffeurs) ? db.chauffeurs : [];
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-cache' });
+    if (!q) { res.end(JSON.stringify({ chauffeurs: liste })); return; }
+    const ch = k.length === 8 ? liste.find(c => c.telephone === k) : null;
+    res.end(JSON.stringify(ch ? { found: true, chauffeur: ch } : { found: false, message: 'Chauffeur non enregistré' }));
     return;
   }
 
