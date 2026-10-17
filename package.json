@@ -1,12 +1,18 @@
 {
-  "name": "ciment-pro-gestion",
+  "name": "sachet-pos",
   "version": "1.0.0",
-  "description": "Logiciel professionnel de gestion de vente de ciment, dette CODIMAC, dispatch chauffeurs et rapports",
+  "description": "Logiciel de gestion de vente de sachets et sacs plastiques (Gros & Détail) - Caisse, Stocks & Rapports",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["ciment", "gestion", "codimac", "togo", "logistique", "btp"],
-  "author": "M. EKOUE",
+  "keywords": [
+    "pos",
+    "caisse",
+    "sachets",
+    "gestion-commerciale",
+    "adaka"
+  ],
+  "author": "SachetPOS",
   "license": "ISC"
 }
