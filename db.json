@@ -33,13 +33,23 @@
     "montantTotal": 12263000,
     "destination": "AKÉPÉ",
     "typeCiment": "CPJ-45 (Diamond Cement)",
-    "tonnesPayees": 0,
-    "montantPaye": 0,
-    "dateDernierReglement": "-",
-    "rapTonnes": 172.7,
-    "rapMontant": 12263000
+    "tonnesPayees": 32,
+    "montantPaye": 2272000,
+    "dateDernierReglement": "19/10/2026",
+    "rapTonnes": 140.7,
+    "rapMontant": 9991000
   },
   "recusCODIMAC": [
+    {
+      "id": 1792441777475,
+      "numero": "Reçu N° 000757",
+      "date": "19/10/2026",
+      "montant": 2272000,
+      "mode": "Non précisé",
+      "commandes": "CD N° 21/1-C-SAR/COD",
+      "caisse": "Caisse CODIMAC",
+      "tonnes": 32
+    },
     {
       "id": 1,
       "numero": "Reçu N° 0000599",
@@ -167,9 +177,9 @@
       "tonnage": 100,
       "pu": 71000,
       "total": 7100000,
-      "reglements": "27T: 1 937 000 F (30/09/2026)",
-      "totalPaye": 1937000,
-      "rap": 5163000,
+      "reglements": "27T: 1 937 000 F (30/09/2026) | 32T: 2 272 000 F (19/10/2026)",
+      "totalPaye": 4209000,
+      "rap": 2891000,
       "solde": false
     },
     {
@@ -315,7 +325,7 @@
     }
   ],
   "version": 13,
-  "lastUpdated": 1791964336861,
+  "lastUpdated": 1792441777475,
   "repertoireChauffeurs": [],
   "chauffeurs": [],
   "chauffeursSupprimes": {},

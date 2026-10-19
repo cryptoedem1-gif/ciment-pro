@@ -215,6 +215,43 @@ function fusionnerBases(dbA, dbB) {
     fusion.chauffeursSupprimes = suppr;
   })();
 
+  // 6. Reçus CODIMAC & historique des commandes fournisseur : fusion sans perte
+  (function () {
+    const cle = r => {
+      const n = String(r.numero || '').replace(/\D/g, '').replace(/^0+/, '');
+      return (n ? n : 'id' + r.id) + '|' + (Number(r.montant) || 0);
+    };
+    const mapR = new Map();
+    [].concat(dbA.recusCODIMAC || [], dbB.recusCODIMAC || []).forEach(r => {
+      if (!r) return;
+      const k = cle(r);
+      if (!mapR.has(k)) mapR.set(k, r);
+    });
+    fusion.recusCODIMAC = Array.from(mapR.values()).sort((x, y) => (Number(y.id) || 0) - (Number(x.id) || 0));
+
+    const mapH = new Map();
+    [].concat(dbA.historiqueCommandes || [], dbB.historiqueCommandes || []).forEach(h => {
+      if (!h || !h.ref) return;
+      const p = mapH.get(h.ref);
+      if (!p || (Number(h.totalPaye) || 0) > (Number(p.totalPaye) || 0)) mapH.set(h.ref, h);
+    });
+    const ordre = (dbA.historiqueCommandes && dbA.historiqueCommandes.length ? dbA.historiqueCommandes : (dbB.historiqueCommandes || [])).map(h => h.ref);
+    fusion.historiqueCommandes = Array.from(mapH.values()).sort((x, y) => {
+      const ix = ordre.indexOf(x.ref), iy = ordre.indexOf(y.ref);
+      return (ix < 0 ? 999 : ix) - (iy < 0 ? 999 : iy);
+    });
+
+    // Paiements enregistrés dans l'application (ids horodatés) => jamais moins que leur somme
+    const sommeNouveaux = fusion.recusCODIMAC.filter(r => Number(r.id) > 1e12).reduce((a, r) => a + (Number(r.montant) || 0), 0);
+    if (fusion.detteActive) {
+      const paye = Math.max(Number(fusion.detteActive.montantPaye) || 0, sommeNouveaux);
+      fusion.detteActive.montantPaye = paye;
+      fusion.detteActive.rapMontant = Math.max(0, (Number(fusion.detteActive.montantTotal) || 12263000) - paye);
+      fusion.detteActive.rapTonnes = Math.max(0, Math.round((fusion.detteActive.rapMontant / 71000) * 10) / 10);
+    }
+  })();
+
+
 
   fusion.lastUpdated = Date.now();
   return fusion;
