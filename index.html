@@ -1086,6 +1086,7 @@
             <i class="fa-solid fa-receipt"></i>
             <span>+ Ajouter un Reçu de Versement</span>
           </button>
+          <button onclick="envoyerDernierPaiementBoss()" class="bg-green-700 hover:bg-green-600 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg shadow flex items-center space-x-2"><i class="fa-brands fa-whatsapp"></i><span>Envoyer au Boss</span></button>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
@@ -1231,6 +1232,31 @@
           </div>
         </div>
 
+        <!-- ENVOI DES RAPPORTS AU BOSS PAR WHATSAPP -->
+        <div id="bloc-boss-whatsapp" class="mt-4 p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="text-xs font-black text-emerald-900 uppercase"><i class="fa-brands fa-whatsapp text-emerald-600 text-base mr-1"></i>Envoyer un rapport au Boss</p>
+            <p class="text-[11px] text-emerald-800">Numéro : <b id="boss-num-affiche" class="font-mono">+228 90 96 47 48</b>
+              <button type="button" onclick="modifierNumeroBoss()" class="ml-1 underline text-emerald-700 font-bold">Modifier</button></p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <select id="boss-type-rapport" class="flex-1 text-xs px-3 py-2 border border-emerald-300 rounded-lg bg-white font-semibold">
+              <option value="BILAN_GLOBAL">⭐ Bilan global & situation réelle</option>
+              <option value="SITUATION_CODIMAC">Situation dette CODIMAC</option>
+              <option value="STOCK_USINE">Stock usine</option>
+              <option value="CREANCES_CLIENTS">Créances & règlements clients</option>
+              <option value="VENTES_MARGES">Ventes & bénéfices</option>
+            </select>
+            <button type="button" onclick="envoyerRapportBossMessage(document.getElementById('boss-type-rapport').value)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-lg shadow flex items-center justify-center space-x-1.5">
+              <i class="fa-solid fa-message"></i><span>Envoyer en message</span>
+            </button>
+            <button type="button" id="btn-boss-pdf" onclick="envoyerRapportBossPDF(document.getElementById('boss-type-rapport').value)" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded-lg shadow flex items-center justify-center space-x-1.5">
+              <i class="fa-solid fa-file-pdf"></i><span>Envoyer en PDF</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-emerald-800">Sur téléphone, le PDF s'ouvre directement dans le partage : choisissez WhatsApp puis le Boss. Sur PC, le PDF est téléchargé et la discussion WhatsApp du Boss s'ouvre pour le joindre.</p>
+        </div>
+
         <!-- Sélecteur de types de rapports -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
           <button onclick="genererRapport('BILAN_GLOBAL')" class="p-3 rounded-lg border-2 border-amber-500 bg-amber-50/70 hover:bg-amber-100 text-left transition focus:ring-2 focus:ring-amber-500 col-span-2 sm:col-span-4 cursor-pointer">
@@ -1328,6 +1354,26 @@
       <button onclick="closeModal('modal-acces-mobile')" class="w-full bg-slate-900 text-white font-bold text-xs py-2.5 rounded-lg">
         Fermer
       </button>
+    </div>
+  </div>
+
+  <!-- MODAL : PROPOSITION D'ENVOI AU BOSS APRÈS PAIEMENT CODIMAC -->
+  <div id="modal-boss-paiement" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 z-[70] hidden no-print">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-3">
+      <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
+        <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-brands fa-whatsapp"></i></div>
+        <h3 class="font-bold text-slate-900 text-base">Reçu enregistré ✅ — informer le Boss ?</h3>
+      </div>
+      <pre id="boss-pay-resume" class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-3 whitespace-pre-wrap font-sans text-slate-800 max-h-56 overflow-y-auto"></pre>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="envoyerPaiementBossMessage()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-lg shadow"><i class="fa-solid fa-message mr-1"></i>Envoyer en message</button>
+        <button type="button" onclick="envoyerPaiementBossPDF()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-lg shadow"><i class="fa-solid fa-file-pdf mr-1"></i>Envoyer en PDF</button>
+      </div>
+      <button type="button" onclick="closeModal('modal-boss-paiement')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Plus tard</button>
+      <label class="flex items-center space-x-2 text-[11px] text-slate-600 cursor-pointer">
+        <input type="checkbox" id="chk-boss-toujours" onchange="DB.bossProposerPaiement = this.checked; sauverDB();" class="rounded text-emerald-600">
+        <span>Me proposer d'envoyer au Boss après chaque paiement CODIMAC</span>
+      </label>
     </div>
   </div>
 
@@ -3538,8 +3584,9 @@ function dedoublonnerCommandes(liste) {
         confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         alert("🎉 FÉLICITATIONS M. EKOUE ! VOTRE DETTE CODIMAC EST ENTIÈREMENT SOLDÉE À 0 FCFA !");
       } else {
-        alert("✅ Reçu enregistré avec succès !\\nNouveau Reste à Payer CODIMAC : " + fmtCFA(DB.detteActive.rapMontant) + " (" + DB.detteActive.rapTonnes + " Tonnes).");
+        // (confirmation affichée dans la fenêtre d'envoi au Boss)
       }
+      proposerEnvoiBossPaiement(DB.recusCODIMAC[0]);
     }
 
     function setPresetPrix(val) {
@@ -4038,6 +4085,203 @@ function dedoublonnerCommandes(liste) {
     }
 
     // ==================== IMPRESSIONS & DOCUMENTS OFFICIELS ====================
+    // ==================== MODULE RAPPORTS WHATSAPP POUR LE BOSS ====================
+    const BOSS_NUM_DEFAUT = '90964748';
+    function numeroBoss() {
+      let d = String(DB.numeroBoss || BOSS_NUM_DEFAUT).replace(/\D/g, '');
+      if (d.startsWith('228') && d.length > 8) d = d.slice(3);
+      return d;
+    }
+    function majAffichageBoss() {
+      const el = document.getElementById('boss-num-affiche');
+      if (el) el.innerText = '+228 ' + numeroBoss().replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+    }
+    function modifierNumeroBoss() {
+      const saisie = prompt("Numéro WhatsApp du Boss (8 chiffres) :", numeroBoss());
+      if (saisie === null) return;
+      let d = saisie.replace(/\D/g, '');
+      if (d.startsWith('228') && d.length > 8) d = d.slice(3);
+      if (d.length !== 8) { alert("Le numéro doit comporter 8 chiffres."); return; }
+      DB.numeroBoss = d;
+      sauverDB();
+      majAffichageBoss();
+    }
+    setTimeout(majAffichageBoss, 1500);
+
+    function construireMessageRapport(type) {
+      const date = new Date().toLocaleDateString('fr-FR');
+      const heure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      const cmds = DB.commandesClients || [];
+      const detteAnt = Number(DB.detteActive.detteAnterieure) || 5163000;
+      const detteNouv = Number(DB.detteActive.nouvelleCommandeMontant) || 7100000;
+      const montantPaye = Number(DB.detteActive.montantPaye) || 0;
+      const detteTotale = Math.max(0, (detteAnt + detteNouv) - montantPaye);
+      const stockDispo = (DB.stockUsine && DB.stockUsine.disponible !== undefined) ? DB.stockUsine.disponible : 40;
+      const creances = cmds.reduce((a, c) => a + getRapClient(c), 0);
+      const encaisse = cmds.reduce((a, c) => a + getTotalPayeClient(c), 0);
+      const entete = '*ÉTABLISSEMENTS M. EKOUE*\n';
+      const pied = '\n_Envoyé le ' + date + ' à ' + heure + '_';
+      let m = '';
+
+      if (type === 'BILAN_GLOBAL') {
+        const valStock = stockDispo * 75000;
+        const actif = creances + valStock;
+        const attente = cmds.filter(c => c.statutLivraison === 'EN_ATTENTE');
+        m = entete + '📊 *BILAN GLOBAL* – ' + date + '\n\n' +
+          '🔴 *Dette CODIMAC* : ' + fmtCFA(detteTotale) + '\n' +
+          '   • Antérieure : ' + fmtCFA(detteAnt) + '\n' +
+          '   • Nouvelle commande : ' + fmtCFA(detteNouv) + '\n' +
+          (montantPaye ? '   • Déjà payé : ' + fmtCFA(montantPaye) + '\n' : '') +
+          '\n🟠 *Créances clients* : ' + fmtCFA(creances) + '\n' +
+          '   • Déjà encaissé : ' + fmtCFA(encaisse) + '\n' +
+          '\n📦 *Stock usine* : ' + stockDispo + ' T (' + stockDispo * 20 + ' sacs) ≈ ' + fmtCFA(valStock) + '\n' +
+          '\n🟢 *Actif mobilisable* : ' + fmtCFA(actif) + '\n' +
+          '⚖️ *Solde net* : ' + (actif - detteTotale >= 0 ? '+' : '') + fmtCFA(actif - detteTotale) + '\n' +
+          (attente.length ? '\n🚚 *Commandes en attente de livraison* :\n' + attente.map(c => '   • ' + c.client + ' – ' + c.tonnage + ' T').join('\n') + '\n' : '');
+      } else if (type === 'SITUATION_CODIMAC') {
+        const recus = DB.recusCODIMAC || [];
+        m = entete + '🏭 *SITUATION DETTE CODIMAC* – ' + date + '\n\n' +
+          '• Dette antérieure (' + (DB.detteActive.detteAnterieureTonnes || 73) + ' T) : ' + fmtCFA(detteAnt) + '\n' +
+          '• Nouvelle commande (' + (DB.detteActive.nouvelleCommandeTonnes || 100) + ' T) : ' + fmtCFA(detteNouv) + '\n' +
+          '• Déjà payé : ' + fmtCFA(montantPaye) + '\n' +
+          '🔴 *RESTE À PAYER : ' + fmtCFA(detteTotale) + '*\n' +
+          (recus.length ? '\n🧾 *Reçus de versement* :\n' + recus.map(r => '   • ' + r.date + ' – ' + fmtCFA(r.montant) + ' (' + r.numero + ')').join('\n') + '\n' : '');
+      } else if (type === 'STOCK_USINE') {
+        const mv = ((DB.stockUsine && DB.stockUsine.mouvements) || []).slice(0, 5);
+        m = entete + '📦 *STOCK USINE* – ' + date + '\n\n' +
+          '• Disponible : *' + stockDispo + ' T* (' + stockDispo * 20 + ' sacs)\n' +
+          '• Valeur de vente : ' + fmtCFA(stockDispo * 75000) + '\n' +
+          (mv.length ? '\n🔄 *Derniers mouvements* :\n' + mv.map(x => '   • ' + x.date + ' – ' + (x.type === 'ENTREE' ? '➕' : '➖') + ' ' + x.tonnage + ' T – ' + (x.motif || '')).join('\n') + '\n' : '');
+      } else if (type === 'CREANCES_CLIENTS') {
+        const dus = cmds.filter(c => getRapClient(c) > 0);
+        m = entete + '💰 *CRÉANCES CLIENTS* – ' + date + '\n\n' +
+          (dus.length ? dus.map(c => '• *' + c.client + '* (' + c.tonnage + ' T) : reste ' + fmtCFA(getRapClient(c)) + ' / ' + fmtCFA(c.totalVente)).join('\n') : 'Aucun solde dû.') +
+          '\n\n🟠 *TOTAL À RECEVOIR : ' + fmtCFA(creances) + '*\n' +
+          '🟢 Déjà encaissé : ' + fmtCFA(encaisse) + '\n';
+      } else if (type === 'VENTES_MARGES') {
+        const tonnes = cmds.reduce((a, c) => a + (Number(c.tonnage) || 0), 0);
+        const ca = cmds.reduce((a, c) => a + (Number(c.totalVente) || 0), 0);
+        const pa = (DB.stockUsine && DB.stockUsine.prixAchat) || 71000;
+        const cout = tonnes * pa;
+        m = entete + '📈 *VENTES & BÉNÉFICES* – ' + date + '\n\n' +
+          '• Volume vendu : ' + tonnes + ' T (' + cmds.length + ' commandes)\n' +
+          '• Chiffre d\'affaires : ' + fmtCFA(ca) + '\n' +
+          '• Coût d\'achat estimé (' + fmtCFA(pa) + '/T) : ' + fmtCFA(cout) + '\n' +
+          '🟢 *Marge brute estimée : ' + fmtCFA(ca - cout) + '*\n' +
+          '• Encaissé : ' + fmtCFA(encaisse) + ' | Reste dû : ' + fmtCFA(creances) + '\n';
+      } else {
+        return null;
+      }
+      return m + pied;
+    }
+
+    function envoyerRapportBossMessage(type) {
+      const msg = construireMessageRapport(type);
+      if (!msg) { alert("Type de rapport inconnu."); return; }
+      window.open('https://wa.me/228' + numeroBoss() + '?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    // ---- Envoi au Boss après un paiement CODIMAC (automatique ou à la demande) ----
+    let dernierRecuCodimacBoss = null;
+    function construireMessagePaiementCodimac(recu) {
+      const detteAnt = Number(DB.detteActive.detteAnterieure) || 5163000;
+      const detteNouv = Number(DB.detteActive.nouvelleCommandeMontant) || 7100000;
+      const paye = Number(DB.detteActive.montantPaye) || 0;
+      const reste = Math.max(0, (detteAnt + detteNouv) - paye);
+      const now = new Date();
+      return '*ÉTABLISSEMENTS M. EKOUE*\n💸 *PAIEMENT CODIMAC ENREGISTRÉ*\n\n' +
+        '• Reçu : ' + recu.numero + '\n' +
+        '• Date : ' + recu.date + '\n' +
+        '• Montant versé : *' + fmtCFA(recu.montant) + '* (≈ ' + recu.tonnes + ' T)\n' +
+        '• Mode : ' + recu.mode + '\n\n' +
+        '📊 *Situation après paiement*\n' +
+        '• Total payé à ce jour : ' + fmtCFA(paye) + '\n' +
+        '🔴 *Reste à payer CODIMAC : ' + fmtCFA(reste) + '*\n' +
+        (reste === 0 ? '🎉 Dette soldée !\n' : '') +
+        '\n_Envoyé le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + '_';
+    }
+    function proposerEnvoiBossPaiement(recu) {
+      if (!recu) return;
+      dernierRecuCodimacBoss = recu;
+      if (DB.bossProposerPaiement === false) {
+        alert("✅ Reçu enregistré avec succès !\nNouveau Reste à Payer CODIMAC : " + fmtCFA(DB.detteActive.rapMontant) + ".");
+        return;
+      }
+      document.getElementById('boss-pay-resume').innerText = construireMessagePaiementCodimac(recu);
+      document.getElementById('chk-boss-toujours').checked = DB.bossProposerPaiement !== false;
+      openModal('modal-boss-paiement');
+    }
+    // À la demande : envoyer le dernier paiement (ou la situation si aucun reçu)
+    function envoyerDernierPaiementBoss() {
+      const recu = (DB.recusCODIMAC || [])[0];
+      if (!recu) { envoyerRapportBossMessage('SITUATION_CODIMAC'); return; }
+      proposerEnvoiBossPaiement(recu);
+    }
+    function envoyerPaiementBossMessage() {
+      if (!dernierRecuCodimacBoss) return;
+      window.open('https://wa.me/228' + numeroBoss() + '?text=' + encodeURIComponent(construireMessagePaiementCodimac(dernierRecuCodimacBoss)), '_blank');
+      closeModal('modal-boss-paiement');
+    }
+    function envoyerPaiementBossPDF() {
+      closeModal('modal-boss-paiement');
+      envoyerRapportBossPDF('SITUATION_CODIMAC');
+    }
+
+    function chargerHtml2Pdf() {
+      return new Promise((resolve, reject) => {
+        if (window.html2pdf) return resolve();
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Bibliothèque PDF indisponible (connexion Internet requise).'));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function envoyerRapportBossPDF(type) {
+      const btn = document.getElementById('btn-boss-pdf');
+      const libelle = btn ? btn.innerHTML : '';
+      try {
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Création du PDF...</span>'; }
+        switchTab('tab-rapports');
+        genererRapport(type);
+        await chargerHtml2Pdf();
+        const date = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
+        const nom = 'Rapport_' + type + '_' + date + '.pdf';
+        const el = document.getElementById('printable-report');
+        const blob = await html2pdf().set({
+          margin: 8, filename: nom,
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css'] }
+        }).from(el).outputPdf('blob');
+
+        const file = new File([blob], nom, { type: 'application/pdf' });
+        const texte = 'Rapport M. EKOUE – ' + date.replace(/-/g, '/');
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: texte, text: texte });
+            return;
+          } catch (e) {
+            if (e && e.name === 'AbortError') return;
+          }
+        }
+        // Repli PC : téléchargement du PDF + ouverture de la discussion WhatsApp du Boss
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = nom;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        window.open('https://wa.me/228' + numeroBoss() + '?text=' + encodeURIComponent(texte + ' (PDF joint : ' + nom + ')'), '_blank');
+        alert("📄 PDF téléchargé : " + nom + "\nDans la discussion WhatsApp du Boss qui vient de s'ouvrir, cliquez sur le trombone 📎 > Document et choisissez ce fichier.");
+      } catch (err) {
+        alert("❌ Impossible de créer le PDF : " + (err && err.message ? err.message : err) + "\nUtilisez « Envoyer en message » ou « Imprimer le Document ».");
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = libelle; }
+      }
+    }
+
     function genererRapport(type) {
       const cont = document.getElementById('printable-report');
       const dateAuj = new Date().toLocaleDateString('fr-FR');
