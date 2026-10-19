@@ -217,7 +217,7 @@
         <button onclick="switchTab('tab-stock')" id="nav-tab-stock" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-boxes-stacked text-amber-400"></i>
           <span>Stock Usine</span>
-          <span id="badge-stock-tab" class="ml-1 bg-amber-500 text-slate-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">40 T</span>
+          <span id="badge-stock-tab" class="ml-1 bg-amber-500 text-slate-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">30 T</span>
         </button>
         <button onclick="switchTab('tab-paiements')" id="nav-tab-paiements" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-wallet text-emerald-400"></i>
@@ -260,8 +260,8 @@
       <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700">
         <i class="fa-solid fa-industry text-amber-400"></i>
         <span class="text-slate-300">Stock Usine Disponible :</span>
-        <strong id="banner-stock" class="text-amber-400 font-black">40 Tonnes</strong>
-        <span class="text-slate-400">(800 sacs)</span>
+        <strong id="banner-stock" class="text-amber-400 font-black">30 Tonnes</strong>
+        <span id="banner-stock-sacs" class="text-slate-400">(600 sacs)</span>
       </div>
 
       <!-- Indicateur Créances Clients -->
@@ -416,31 +416,35 @@
 
               <div class="mt-1">
                 <p class="text-xs text-slate-300">Total Actif Mobilisable (Créances + Stock) :</p>
-                <div id="bilan-actif-total" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">11 938 500 FCFA</div>
-                <p class="text-[11px] text-slate-300 mt-0.5">
-                  Créances clients (8,94M) + Stock usine 40 T (3,00M)
+                <div id="bilan-actif-total" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">11 298 500 FCFA</div>
+                <p id="bilan-actif-detail" class="text-[11px] text-slate-300 mt-0.5">
+                  Créances clients (9,05M) + Stock usine 30 T (2,25M)
                 </p>
               </div>
 
               <div class="mt-3.5 pt-3 border-t border-slate-700/80 space-y-2 text-xs">
                 <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700/80 space-y-1">
                   <div class="flex justify-between items-center">
-                    <span class="text-slate-400">Total dette CODIMAC :</span>
-                    <span class="font-bold text-red-400">12 263 000 FCFA</span>
+                    <span class="text-slate-400">Total dette CODIMAC initiale :</span>
+                    <span id="bilan-card-dette-totale" class="font-bold text-slate-300">12 263 000 FCFA</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="text-slate-400">Actif disponible :</span>
-                    <span class="font-bold text-emerald-400">11 938 500 FCFA</span>
+                    <span class="text-slate-400">Reste à payer actuel :</span>
+                    <span id="bilan-card-dette-reste" class="font-bold text-red-400">9 991 000 FCFA</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Actif disponible (Créances + Stock) :</span>
+                    <span id="bilan-card-actif-dispo" class="font-bold text-emerald-400">11 298 500 FCFA</span>
                   </div>
                   <div class="flex justify-between items-center pt-1 border-t border-slate-800">
-                    <span class="text-slate-200 font-bold">Écart résiduel :</span>
-                    <span id="bilan-net-cash" class="font-black text-amber-300">- 324 500 FCFA</span>
+                    <span class="text-slate-200 font-bold">Écart résiduel net :</span>
+                    <span id="bilan-net-cash" class="font-black text-emerald-400">+ 1 307 500 FCFA</span>
                   </div>
                 </div>
 
                 <div class="flex justify-between items-center text-[11px] text-slate-300 px-1">
-                  <span>Stock Usine Diamond Cement :</span>
-                  <span id="bilan-stock-tonnes" class="font-bold text-amber-300">40 T (800 sacs)</span>
+                  <span>Stock Usine Diamond Cement disponible :</span>
+                  <span id="bilan-stock-tonnes" class="font-bold text-amber-300">30 T (600 sacs)</span>
                 </div>
               </div>
             </div>
@@ -448,7 +452,7 @@
             <div class="mt-4 pt-3 border-t border-slate-700/80">
               <div class="flex items-center text-[11px] text-emerald-300 bg-emerald-950/60 p-2 rounded-lg border border-emerald-500/30">
                 <i class="fa-solid fa-circle-check text-emerald-400 mr-2 text-base shrink-0"></i>
-                <span><strong>Situation solide :</strong> 97,4% de votre dette est déjà couverte. Seuls <strong>82 sacs de ciment</strong> suffisent pour solder toute la dette à zéro !</span>
+                <span id="bilan-conclusion-msg"><strong>Situation solide & excédentaire :</strong> Votre actif mobilisable couvre 113,1% de la dette restante. Vous dégagez un excédent net de <strong>+1 307 500 FCFA</strong> !</span>
               </div>
             </div>
           </div>
@@ -465,14 +469,14 @@
           <div class="flex justify-between items-start">
             <div>
               <p class="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Stock Usine</p>
-              <h3 id="kpi-stock-usine" class="text-2xl font-black text-amber-700 mt-1">40 T</h3>
+              <h3 id="kpi-stock-usine" class="text-2xl font-black text-amber-700 mt-1">30 T</h3>
             </div>
             <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
               <i class="fa-solid fa-boxes-stacked text-base"></i>
             </div>
           </div>
           <div class="mt-2.5 pt-2 border-t border-amber-100 flex items-center justify-between text-[11px] text-slate-600">
-            <span>800 Sacs CPJ-45</span>
+            <span id="kpi-stock-sacs">600 Sacs CPJ-45</span>
             <button onclick="switchTab('tab-stock')" class="text-amber-800 font-bold hover:underline">Gérer →</button>
           </div>
         </div>
@@ -622,7 +626,7 @@
 
         <!-- Colonne Droite : Stock Usine & Actions Rapides (1/3 écran) -->
         <div class="space-y-4">
-          <!-- Carte Focus Stock Usine 40 T -->
+          <!-- Carte Focus Stock Usine 30 T -->
           <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 rounded-xl p-5 shadow-sm">
             <div class="flex justify-between items-start">
               <div>
@@ -638,12 +642,12 @@
             <div class="mt-4 bg-white/90 backdrop-blur-xs p-3 rounded-lg border border-amber-300 space-y-1">
               <div class="flex justify-between items-baseline">
                 <span class="text-xs font-semibold text-slate-700">Tonnage Réel en Usine :</span>
-                <span id="focus-stock-tonnes" class="text-2xl font-black text-slate-900">40 Tonnes</span>
+                <span id="focus-stock-tonnes" class="text-2xl font-black text-slate-900">30 Tonnes</span>
               </div>
-              <p class="text-[11px] text-slate-600">Équivalent : <strong>800 Sacs de 50 kg</strong></p>
+              <p class="text-[11px] text-slate-600">Équivalent : <strong id="focus-stock-sacs">600 Sacs de 50 kg</strong></p>
               <div class="pt-2 border-t border-slate-200 text-[11px] flex justify-between">
                 <span>Valeur Vente (75K/T) :</span>
-                <strong class="text-brand-700">3 000 000 FCFA</strong>
+                <strong id="focus-stock-valeur" class="text-brand-700">2 250 000 FCFA</strong>
               </div>
             </div>
 
@@ -772,8 +776,8 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-5">
           <div class="bg-white/95 rounded-xl p-3.5 border border-amber-300">
             <p class="text-[11px] font-bold text-slate-500 uppercase">Tonnage Disponible</p>
-            <h3 id="stock-detail-tonnes" class="text-2xl font-black text-amber-700 mt-0.5">40 Tonnes</h3>
-            <p class="text-[10px] text-slate-500">800 sacs de 50 kg</p>
+            <h3 id="stock-detail-tonnes" class="text-2xl font-black text-amber-700 mt-0.5">30 Tonnes</h3>
+            <p id="stock-detail-sacs" class="text-[10px] text-slate-500">600 sacs de 50 kg</p>
           </div>
           <div class="bg-white/95 rounded-xl p-3.5 border border-amber-300">
             <p class="text-[11px] font-bold text-slate-500 uppercase">Coût Achat (71K/T)</p>
@@ -800,7 +804,7 @@
           <span>Capacité Logistique Immédiate (Camions Usine)</span>
         </h4>
         <p class="text-xs text-slate-600 mb-4">
-          Avec <strong>40 Tonnes</strong> actuellement en usine, vous pouvez ordonner aux chauffeurs d’effectuer :
+          Avec <strong id="stock-alloc-tonnes">30 Tonnes</strong> actuellement en usine, vous pouvez ordonner aux chauffeurs d’effectuer :
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
           <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
@@ -814,7 +818,7 @@
             <p class="text-xs font-bold text-emerald-700 mt-1">Disponible immédiatement</p>
           </div>
           <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <span class="text-xs font-bold text-amber-900">Total Allouable : 40 Tonnes</span>
+            <span id="stock-alloc-total" class="text-xs font-bold text-amber-900">Total Allouable : 30 Tonnes</span>
             <p class="text-[11px] text-amber-800 mt-1">Reste après ces 2 rotations : 0 Tonnes</p>
             <p class="text-xs font-bold text-amber-700 mt-1">Rotation complète optimisée</p>
           </div>
@@ -1267,7 +1271,7 @@
                 </div>
                 <div>
                   <p class="text-xs font-black text-slate-900 uppercase">⭐ Bilan Global & Situation Réelle Complète (Document Recommandé)</p>
-                  <p class="text-[11px] text-slate-600">Synthèse Dette CODIMAC (5 163 000 F) • Créances 4 Clients (8 938 500 F) • Solde Net (+3 775 500 F) • Stock Usine (40 T)</p>
+                  <p class="text-[11px] text-slate-600">Synthèse Dette CODIMAC (Reste à payer) • Créances Clients • Solde Net & Stock Usine</p>
                 </div>
               </div>
               <span class="hidden sm:inline-block bg-amber-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-full shadow-xs">Vue Recommandée</span>
@@ -1281,7 +1285,7 @@
           <button onclick="genererRapport('STOCK_USINE')" class="p-3 rounded-lg border border-slate-300 hover:border-brand-500 hover:bg-brand-50 text-left transition focus:ring-2 focus:ring-brand-500">
             <i class="fa-solid fa-boxes-stacked text-amber-600 mb-1"></i>
             <p class="text-xs font-bold text-slate-800">Fiche de Stock Usine</p>
-            <p class="text-[10px] text-slate-500">Disponibilité (40 T) & rotation</p>
+            <p class="text-[10px] text-slate-500">Disponibilité temps réel & rotation</p>
           </button>
           <button onclick="genererRapport('CREANCES_CLIENTS')" class="p-3 rounded-lg border border-slate-300 hover:border-brand-500 hover:bg-brand-50 text-left transition focus:ring-2 focus:ring-brand-500">
             <i class="fa-solid fa-hand-holding-dollar text-emerald-600 mb-1"></i>
@@ -3798,6 +3802,42 @@ function dedoublonnerCommandes(liste) {
         if (elBSTonnes) elBSTonnes.innerText = stockDispo + " T (" + (stockDispo * 20) + " sacs)";
         const elBActif = document.getElementById('bilan-actif-total');
         if (elBActif) elBActif.innerText = fmtCFA(totalActif);
+
+        const elBActifDetail = document.getElementById('bilan-actif-detail');
+        if (elBActifDetail) {
+          elBActifDetail.innerText = "Créances clients (" + (creancesTotales / 1000000).toFixed(2) + "M) + Stock usine " + stockDispo + " T (" + (valeurStockVente / 1000000).toFixed(2) + "M)";
+        }
+        const elCardDetteTot = document.getElementById('bilan-card-dette-totale');
+        if (elCardDetteTot) elCardDetteTot.innerText = fmtCFA(detteAnt + detteNouv);
+        const elCardDetteReste = document.getElementById('bilan-card-dette-reste');
+        if (elCardDetteReste) elCardDetteReste.innerText = fmtCFA(detteTotaleCODIMAC);
+        const elCardActifDispo = document.getElementById('bilan-card-actif-dispo');
+        if (elCardActifDispo) elCardActifDispo.innerText = fmtCFA(totalActif);
+
+        const elConcl = document.getElementById('bilan-conclusion-msg');
+        if (elConcl) {
+          if (ecartNet >= 0) {
+            elConcl.innerHTML = "<strong>Situation solide & excédentaire :</strong> Votre actif mobilisable couvre <strong>" + tauxCouverture + "%</strong> de la dette restante. Vous dégagez un excédent net de <strong>+" + fmtCFA(ecartNet) + "</strong> !";
+          } else {
+            const sacsManquants = Math.ceil(Math.abs(ecartNet) / 3750);
+            elConcl.innerHTML = "<strong>Situation solide :</strong> " + tauxCouverture + "% de votre dette est déjà couverte. Seuls <strong>" + sacsManquants + " sacs de ciment</strong> suffisent pour solder toute la dette à zéro !";
+          }
+        }
+
+        const elBannerSacs = document.getElementById('banner-stock-sacs');
+        if (elBannerSacs) elBannerSacs.innerText = "(" + (stockDispo * 20) + " sacs)";
+        const elKpiSacs = document.getElementById('kpi-stock-sacs');
+        if (elKpiSacs) elKpiSacs.innerText = (stockDispo * 20) + " Sacs CPJ-45";
+        const elFocusSacs = document.getElementById('focus-stock-sacs');
+        if (elFocusSacs) elFocusSacs.innerText = (stockDispo * 20) + " Sacs de 50 kg";
+        const elFocusVal = document.getElementById('focus-stock-valeur');
+        if (elFocusVal) elFocusVal.innerText = fmtCFA(valeurStockVente);
+        const elDetailSacs = document.getElementById('stock-detail-sacs');
+        if (elDetailSacs) elDetailSacs.innerText = (stockDispo * 20) + " sacs de 50 kg";
+        const elAllocTonnes = document.getElementById('stock-alloc-tonnes');
+        if (elAllocTonnes) elAllocTonnes.innerText = stockDispo + " Tonnes";
+        const elAllocTot = document.getElementById('stock-alloc-total');
+        if (elAllocTot) elAllocTot.innerText = "Total Allouable : " + stockDispo + " Tonnes";
       }
 
       // 4. Jauge Dette CODIMAC
@@ -4392,7 +4432,7 @@ function dedoublonnerCommandes(liste) {
               '<p class="text-[11px] font-bold uppercase text-indigo-800">3. Actif Total Mobilisable</p>' +
               '<p class="text-2xl font-black text-indigo-700 mt-1">' + fmtCFA(actifTotal) + '</p>' +
               '<p class="text-xs text-emerald-700 font-bold mt-1">Couverture Dette : ' + tauxCouverture + '%</p>' +
-              '<p class="text-[11px] text-slate-600">Stock usine 40 T inclus (' + fmtCFA(valeurStockVente) + ')</p>' +
+              '<p class="text-[11px] text-slate-600">Stock usine ' + stockDispo + ' T inclus (' + fmtCFA(valeurStockVente) + ')</p>' +
             '</div>' +
           '</div>' +
 
@@ -4464,7 +4504,7 @@ function dedoublonnerCommandes(liste) {
                 '<span class="text-base font-bold text-amber-300">' + fmtCFA(creancesTotales) + '</span>' +
               '</div>' +
               '<div>' +
-                '<span class="text-slate-400 block">+ Stock Usine 40 T :</span>' +
+                '<span class="text-slate-400 block">+ Stock Usine ' + stockDispo + ' T :</span>' +
                 '<span class="text-base font-bold text-amber-300">' + fmtCFA(valeurStockVente) + '</span>' +
               '</div>' +
               '<div>' +
@@ -4477,7 +4517,7 @@ function dedoublonnerCommandes(liste) {
               '</div>' +
             '</div>' +
             '<div class="border-t border-slate-800 pt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs gap-2">' +
-              '<span class="text-slate-300">Écart résiduel net : <strong class="text-amber-300">' + fmtCFA(ecartNet) + '</strong> (seulement 82 sacs de ciment pour équilibrer à zéro)</span>' +
+              '<span class="text-slate-300">Écart résiduel net : <strong class="' + (ecartNet >= 0 ? 'text-emerald-300' : 'text-amber-300') + '">' + (ecartNet >= 0 ? '+' : '') + fmtCFA(ecartNet) + '</strong>' + (ecartNet >= 0 ? ' (Excédent net positif)' : ' (Solde résiduel)') + '</span>' +
               '<span class="bg-emerald-600/30 border border-emerald-500 text-emerald-300 px-3 py-1 rounded font-bold">TAUX DE COUVERTURE : ' + tauxCouverture + '%</span>' +
             '</div>' +
           '</div>' +

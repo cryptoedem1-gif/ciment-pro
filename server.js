@@ -281,6 +281,14 @@ function ecrireDB(data) {
 // ==================== SYNCHRONISATION BIDIRECTIONNELLE CLOUD (PC <-> RENDER) ====================
 let synchroEnCours = false;
 
+// Empreinte stable d'une base (sans l'horodatage) pour ne synchroniser que s'il y a un vrai changement
+function empreinteDB(o) {
+  const tri = v => Array.isArray(v) ? v.map(tri)
+    : (v && typeof v === 'object') ? Object.keys(v).sort().reduce((a, k) => { if (k !== 'lastUpdated') a[k] = tri(v[k]); return a; }, {})
+    : v;
+  return JSON.stringify(tri(o));
+}
+
 async function synchroniserAvecCloud() {
   if (IS_RENDER || synchroEnCours) return;
   synchroEnCours = true;
@@ -295,13 +303,14 @@ async function synchroniserAvecCloud() {
         // Fusionner local et cloud
         const fusion = fusionnerBases(localDB, cloudDB);
 
-        // Sauvegarder en local
-        ecrireDB(fusion);
+        // Sauvegarder en local uniquement si quelque chose a réellement changé
+        const empFusion = empreinteDB(fusion);
+        if (empFusion !== empreinteDB(localDB)) ecrireDB(fusion);
 
-        // Si le cloud n'avait pas toutes nos données (ex: Eric Bukpessi ou paiements), on le met à jour
+        // Si le cloud n'avait pas toutes nos données (ex: commandes, reçus, paiements), on le met à jour
         const cloudCount = (cloudDB.commandesClients || []).length;
         const fusionCount = (fusion.commandesClients || []).length;
-        if (fusionCount > cloudCount || fusion.lastUpdated > (cloudDB.lastUpdated || 0)) {
+        if (empFusion !== empreinteDB(cloudDB)) {
           console.log(`[SYNCHRO CLOUD] 📤 Envoi de la base fusionnée (${fusionCount} commandes) vers Render...`);
           await fetch(`${CLOUD_URL}/api/db`, {
             method: 'POST',
@@ -414,7 +423,8 @@ const server = http.createServer((req, res) => {
 
           // FUSION INTELLIGENTE : Aucun écrasement destructeur !
           const fusion = fusionnerBases(existant, entrant);
-          ecrireDB(fusion);
+          if (!existant || empreinteDB(fusion) !== empreinteDB(existant)) ecrireDB(fusion);
+          else fusion.lastUpdated = existant.lastUpdated;
 
           res.writeHead(200, {
             'Content-Type': 'application/json; charset=utf-8',
