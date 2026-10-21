@@ -1236,29 +1236,65 @@
           </div>
         </div>
 
-        <!-- ENVOI DES RAPPORTS AU BOSS PAR WHATSAPP -->
-        <div id="bloc-boss-whatsapp" class="mt-4 p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 space-y-2.5">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <p class="text-xs font-black text-emerald-900 uppercase"><i class="fa-brands fa-whatsapp text-emerald-600 text-base mr-1"></i>Envoyer un rapport au Boss</p>
-            <p class="text-[11px] text-emerald-800">Numéro : <b id="boss-num-affiche" class="font-mono">+228 90 96 47 48</b>
-              <button type="button" onclick="modifierNumeroBoss()" class="ml-1 underline text-emerald-700 font-bold">Modifier</button></p>
+        <!-- ENVOI DE LA SITUATION CODIMAC AU BOSS PAR WHATSAPP -->
+        <div id="bloc-boss-whatsapp" class="mt-4 p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/70 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200 pb-2">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm shadow-xs">
+                <i class="fa-brands fa-whatsapp"></i>
+              </div>
+              <div>
+                <p class="text-xs font-black text-emerald-950 uppercase tracking-wide">Situation CODIMAC pour le Boss</p>
+                <p class="text-[11px] text-emerald-800">Destinataire : <b id="boss-num-affiche" class="font-mono font-bold">+228 90 96 47 48</b>
+                  <button type="button" onclick="modifierNumeroBoss()" class="ml-1 underline text-emerald-700 font-semibold hover:text-emerald-900">Modifier</button>
+                </p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-red-100 text-red-800 border border-red-200 text-[11px] font-black px-2.5 py-0.5 rounded-full">
+                Reste dû CODIMAC : <span id="boss-rap-badge">9 991 000 FCFA</span>
+              </span>
+            </div>
           </div>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <select id="boss-type-rapport" class="flex-1 text-xs px-3 py-2 border border-emerald-300 rounded-lg bg-white font-semibold">
-              <option value="BILAN_GLOBAL">⭐ Bilan global & situation réelle</option>
-              <option value="SITUATION_CODIMAC">Situation dette CODIMAC</option>
-              <option value="STOCK_USINE">Stock usine</option>
-              <option value="CREANCES_CLIENTS">Créances & règlements clients</option>
-              <option value="VENTES_MARGES">Ventes & bénéfices</option>
-            </select>
-            <button type="button" onclick="envoyerRapportBossMessage(document.getElementById('boss-type-rapport').value)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-lg shadow flex items-center justify-center space-x-1.5">
-              <i class="fa-solid fa-message"></i><span>Envoyer en message</span>
+
+          <!-- Résumé dynamique CODIMAC pour le Boss -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="bg-white p-2 rounded-lg border border-emerald-200">
+              <p class="text-[10px] uppercase font-semibold text-slate-500">Dette Antérieure</p>
+              <p id="boss-dette-ant" class="font-bold text-slate-800">5 163 000 F</p>
+              <p class="text-[10px] text-slate-400">73 Tonnes</p>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-emerald-200">
+              <p class="text-[10px] uppercase font-semibold text-slate-500">Nouvelle Commande</p>
+              <p id="boss-dette-nouv" class="font-bold text-slate-800">7 100 000 F</p>
+              <p class="text-[10px] text-slate-400">100 Tonnes</p>
+            </div>
+            <div class="bg-emerald-100/60 p-2 rounded-lg border border-emerald-300">
+              <p class="text-[10px] uppercase font-semibold text-emerald-800">Déjà Réglé</p>
+              <p id="boss-dette-paye" class="font-black text-emerald-700">2 272 000 F</p>
+              <p id="boss-dette-recu" class="text-[10px] text-emerald-600">Reçu 000757 (32 T)</p>
+            </div>
+            <div class="bg-red-50 p-2 rounded-lg border border-red-300">
+              <p class="text-[10px] uppercase font-bold text-red-800">Reste À Payer (RAP)</p>
+              <p id="boss-dette-rap" class="font-black text-red-700">9 991 000 F</p>
+              <p id="boss-dette-tonnes" class="text-[10px] font-semibold text-red-600">140.7 Tonnes</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap gap-2 pt-1">
+            <button type="button" onclick="envoyerRapportBossMessage('SITUATION_CODIMAC')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow flex items-center justify-center space-x-2 transition">
+              <i class="fa-brands fa-whatsapp text-sm"></i><span>Envoyer Situation CODIMAC (WhatsApp)</span>
             </button>
-            <button type="button" id="btn-boss-pdf" onclick="envoyerRapportBossPDF(document.getElementById('boss-type-rapport').value)" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded-lg shadow flex items-center justify-center space-x-1.5">
-              <i class="fa-solid fa-file-pdf"></i><span>Envoyer en PDF</span>
+            <button type="button" id="btn-boss-pdf" onclick="envoyerRapportBossPDF('SITUATION_CODIMAC')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow flex items-center justify-center space-x-2 transition">
+              <i class="fa-solid fa-file-pdf text-sm"></i><span>Envoyer Fiche CODIMAC (PDF)</span>
+            </button>
+            <button type="button" onclick="envoyerDernierPaiementBoss()" class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-400 font-bold text-xs py-2.5 px-3 rounded-lg shadow-xs flex items-center justify-center space-x-1.5 transition">
+              <i class="fa-solid fa-receipt text-emerald-600"></i><span>Dernier Reçu Versé</span>
             </button>
           </div>
-          <p class="text-[10px] text-emerald-800">Sur téléphone, le PDF s'ouvre directement dans le partage : choisissez WhatsApp puis le Boss. Sur PC, le PDF est téléchargé et la discussion WhatsApp du Boss s'ouvre pour le joindre.</p>
+          <p class="text-[10px] text-emerald-800 leading-tight">
+            ℹ️ <em>Le Boss suit <strong>strictement la situation CODIMAC</strong> (fournisseur). Aucune créance client ni donnée interne n'est transmise.</em>
+          </p>
         </div>
 
         <!-- Sélecteur de types de rapports -->
@@ -1757,12 +1793,21 @@
 
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="text-xs font-semibold text-slate-700">Montant Encaissé (FCFA) *</label>
+            <label class="text-xs font-semibold text-slate-700">Montant Encaissé (en FCFA ou en Tonnes) *</label>
             <button type="button" onclick="remplirSoldeCompletClient()" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
               Solder Tout le Reste
             </button>
           </div>
-          <input type="number" id="pay-montant" placeholder="Ex: 500000" class="w-full text-base font-bold text-emerald-700 px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <input type="number" id="pay-montant" oninput="calculerDepuisFCFA()" placeholder="FCFA (ex: 500000)" class="w-full text-sm font-bold text-emerald-700 px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-emerald-500">
+              <span class="text-[10px] text-slate-500">Montant en FCFA</span>
+            </div>
+            <div>
+              <input type="number" id="pay-tonnes" oninput="calculerDepuisTonnes()" placeholder="Tonnes (ex: 15 ou 20)" step="0.5" class="w-full text-sm font-bold text-blue-700 px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-blue-500">
+              <span class="text-[10px] text-slate-500">Ou Équivalent Tonnes</span>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -3242,6 +3287,26 @@ function dedoublonnerCommandes(liste) {
       actualiserApercuPaiementClient();
     }
 
+    function calculerDepuisTonnes() {
+      const cmdId = Number(document.getElementById('pay-client-select').value);
+      const cmd = DB.commandesClients.find(c => c.id === cmdId);
+      const pu = cmd ? (Number(cmd.prixVenteTonne) || 75000) : 75000;
+      const t = Number(document.getElementById('pay-tonnes').value) || 0;
+      if (t > 0) {
+        document.getElementById('pay-montant').value = Math.round(t * pu);
+      }
+    }
+
+    function calculerDepuisFCFA() {
+      const cmdId = Number(document.getElementById('pay-client-select').value);
+      const cmd = DB.commandesClients.find(c => c.id === cmdId);
+      const pu = cmd ? (Number(cmd.prixVenteTonne) || 75000) : 75000;
+      const m = Number(document.getElementById('pay-montant').value) || 0;
+      if (m > 0) {
+        document.getElementById('pay-tonnes').value = Math.round((m / pu) * 10) / 10;
+      }
+    }
+
     function actualiserApercuPaiementClient() {
       const cmdId = Number(document.getElementById('pay-client-select').value);
       const cmd = DB.commandesClients.find(c => c.id === cmdId);
@@ -3249,11 +3314,15 @@ function dedoublonnerCommandes(liste) {
 
       const dejaPaye = getTotalPayeClient(cmd);
       const rap = getRapClient(cmd);
+      const pu = Number(cmd.prixVenteTonne) || 75000;
+      const tonnesRestantes = Math.round((rap / pu) * 10) / 10;
 
       document.getElementById('pay-box-total').innerText = fmtCFA(cmd.totalVente);
       document.getElementById('pay-box-deja-paye').innerText = fmtCFA(dejaPaye);
-      document.getElementById('pay-box-reste').innerText = fmtCFA(rap);
+      document.getElementById('pay-box-reste').innerText = fmtCFA(rap) + ' (' + tonnesRestantes + ' T à ' + fmtCFA(pu) + '/T)';
       document.getElementById('pay-montant').value = rap > 0 ? rap : 0;
+      const elTonnes = document.getElementById('pay-tonnes');
+      if (elTonnes) elTonnes.value = tonnesRestantes;
     }
 
     function remplirSoldeCompletClient() {
@@ -3517,41 +3586,68 @@ function dedoublonnerCommandes(liste) {
       const cmd = DB.commandesClients.find(c => c.id === cmdId);
       if (!cmd) return;
 
-      const rap = getRapClient(cmd);
-      const dejaPaye = getTotalPayeClient(cmd);
+      // Agrégation globale pour le client
+      const nomClient = (cmd.client || '').trim().toLowerCase();
+      const clientCmds = DB.commandesClients.filter(c => (c.client || '').trim().toLowerCase() === nomClient);
+      
+      let totalTonnage = 0;
+      let totalFacture = 0;
+      let totalValeurCmd = 0;
+      let totalAncienneDette = 0;
+      let dejaPaye = 0;
+      const tousPaiements = [];
+
+      clientCmds.forEach(c => {
+        totalTonnage += Number(c.tonnage) || 0;
+        totalFacture += Number(c.totalVente) || 0;
+        totalValeurCmd += Number(c.valeurCommande) || (Number(c.tonnage) * Number(c.prixVenteTonne || 75000));
+        totalAncienneDette += Number(c.ancienneDette) || 0;
+        dejaPaye += getTotalPayeClient(c);
+        (c.paiements || []).forEach(p => tousPaiements.push(p));
+      });
+
+      const rap = Math.max(0, totalFacture - dejaPaye);
       const dateAuj = new Date().toLocaleDateString('fr-FR');
       
       let msg = "";
       if (rap <= 0) {
         msg = "Bonjour *" + cmd.client + "*,\n\n" +
-          "Nous vous confirmons que votre compte pour la livraison de " + cmd.tonnage + "T de ciment Diamond CPJ-45 (" + cmd.destination + ") est *ENTIÈREMENT SOLDÉ* (Reste : 0 FCFA).\n" +
-          "Total réglé : " + fmtCFA(dejaPaye) + ".\n\n" +
+          "Nous vous confirmons que votre compte pour les livraisons de ciment Diamond CPJ-45 est *ENTIÈREMENT SOLDÉ* (Reste : 0 FCFA).\n\n" +
           "Merci pour votre confiance et fidélité !\n" +
-          "Établissement M. EKOUE - Distribution Ciment\nTél : +228 90 28 88 75";
+          "Établissements M. EKOUE - Distribution Ciment\nTél : +228 90 28 88 75";
       } else {
-        const nbVersements = (cmd.paiements || []).length;
-        const detailsTranches = (cmd.paiements || []).map((p, i) => "  • Acompte " + (i + 1) + " (" + p.date + ") : -" + fmtCFA(p.montant) + " [" + p.mode + "]").join("\n");
+        const pu = Number(cmd.prixVenteTonne) || 75000;
+        const tonnesRestantes = Math.round((rap / pu) * 10) / 10;
+        const sacs = Math.round(tonnesRestantes * 20);
+        const dernierPaye = tousPaiements.length ? tousPaiements[tousPaiements.length - 1] : null;
 
-        let detailCalcul = "";
+        const paiementsValides = (tousPaiements || []).filter(p => (Number(p.montant) || 0) > 0);
+        const dernierPayeValide = paiementsValides.length ? paiementsValides[paiementsValides.length - 1] : null;
+
+        let lignesLivraisons = "";
         if (cmd.ancienneDette && cmd.ancienneDette > 0) {
-          detailCalcul = "📦 Livraison " + cmd.tonnage + "T (" + cmd.destination + ") : " + fmtCFA(cmd.valeurCommande || (cmd.tonnage * cmd.prixVenteTonne)) + "\n" +
-            "📌 Ancienne dette / créance reportée : " + fmtCFA(cmd.ancienneDette) + "\n" +
-            "💰 Total brut dû : " + fmtCFA(cmd.totalVente) + "\n";
+          lignesLivraisons += "• Créance reportée : " + fmtCFA(cmd.ancienneDette) + "\n";
+        }
+        if (cmd.livraisons && cmd.livraisons.length > 0) {
+          cmd.livraisons.forEach(liv => {
+            lignesLivraisons += "• " + liv.tonnes + " tonnes livrées le " + liv.date + "\n";
+          });
         } else {
-          detailCalcul = "📦 Livraison " + cmd.tonnage + "T (" + cmd.destination + ") : " + fmtCFA(cmd.totalVente) + "\n";
+          lignesLivraisons += "• " + cmd.tonnage + " tonnes de ciment CPJ-45\n";
         }
 
-        msg = "📄 *SITUATION DE COMPTE & LIVRAISON CIMENT*\n" +
-          "Établissement M. EKOUE | Tél : +228 90 28 88 75\n" +
-          "Date : " + dateAuj + "\n\n" +
-          "Bonjour *" + cmd.client + "*,\n" +
-          "Voici le point actualisé de votre compte :\n\n" +
-          detailCalcul +
-          (dejaPaye > 0 ? ("✅ Acomptes déduits : -" + fmtCFA(dejaPaye) + " (" + nbVersements + " versement" + (nbVersements > 1 ? "s" : "") + ")\n" + (detailsTranches ? (detailsTranches + "\n") : "")) : "⏳ Acomptes reçus : 0 FCFA\n") +
-          "🔴 *NET RESTANT À RÉGLER (SOLDE DÛ) : " + fmtCFA(rap) + "*\n\n" +
-          "Merci de bien vouloir procéder au règlement.\n" +
-          "Cordialement,\n" +
-          "M. EKOUE (+228 90 28 88 75)";
+        msg = "*ÉTABLISSEMENTS M. EKOUE*\n" +
+          "*Distribution & Négoce Ciment*\n" +
+          "Lomé - Togo • Tél : +228 90 28 88 75\n\n" +
+          "📋 *SITUATION COMPTE CLIENT : " + cmd.client.toUpperCase() + "*\n" +
+          "📅 Date : " + dateAuj + "\n\n" +
+          "📦 *DÉTAIL DES LIVRAISONS*\n" +
+          lignesLivraisons +
+          (dernierPayeValide ? ("• Règlement reçu : -" + fmtCFA(dernierPayeValide.montant) + " (le " + dernierPayeValide.date + ")\n") : "") +
+          "\n🔴 *TOTAL RESTANT DÛ : " + fmtCFA(rap) + "*\n" +
+          "📦 Équivalent restant : *" + tonnesRestantes + " Tonnes* (" + sacs + " sacs CPJ-45)\n\n" +
+          "Merci pour votre confiance et pour le règlement du solde restant.\n" +
+          "Cordialement,\nM. EKOUE (+228 90 28 88 75)";
       }
 
       // Nettoyage et formatage du numéro Togo (évite tout doublon d'indicatif)
@@ -3851,6 +3947,25 @@ function dedoublonnerCommandes(liste) {
       document.getElementById('progress-reste-txt').innerText = fmtCFA(detteTotaleCODIMAC) + " (" + DB.detteActive.rapTonnes + " Tonnes)";
       document.getElementById('det-paye').innerText = fmtCFA(montantPayeDette);
       document.getElementById('det-rap').innerText = fmtCFA(detteTotaleCODIMAC);
+
+      // Mise à jour dynamique du bloc Boss (Situation CODIMAC)
+      const elBossRapBadge = document.getElementById('boss-rap-badge');
+      if (elBossRapBadge) elBossRapBadge.innerText = fmtCFA(detteTotaleCODIMAC);
+      const elBossAnt = document.getElementById('boss-dette-ant');
+      if (elBossAnt) elBossAnt.innerText = fmtCFA(detteAnt);
+      const elBossNouv = document.getElementById('boss-dette-nouv');
+      if (elBossNouv) elBossNouv.innerText = fmtCFA(detteNouv);
+      const elBossPaye = document.getElementById('boss-dette-paye');
+      if (elBossPaye) elBossPaye.innerText = fmtCFA(montantPayeDette);
+      const elBossRecu = document.getElementById('boss-dette-recu');
+      const dernierRecuBoss = (DB.recusCODIMAC || [])[0];
+      if (elBossRecu) {
+        elBossRecu.innerText = dernierRecuBoss ? (dernierRecuBoss.numero + ' (' + dernierRecuBoss.tonnes + ' T)') : (DB.detteActive.tonnesPayees + ' T');
+      }
+      const elBossRap = document.getElementById('boss-dette-rap');
+      if (elBossRap) elBossRap.innerText = fmtCFA(detteTotaleCODIMAC);
+      const elBossTonnes = document.getElementById('boss-dette-tonnes');
+      if (elBossTonnes) elBossTonnes.innerText = DB.detteActive.rapTonnes + ' Tonnes';
 
       // 5. Tableau Synthèse Commandes & Créances Clients sur le Tableau de Bord
       const tbAttente = document.getElementById('table-commandes-attente');
@@ -4218,12 +4333,19 @@ function dedoublonnerCommandes(liste) {
           (attente.length ? '\n🚚 *Commandes en attente de livraison* :\n' + attente.map(c => '   • ' + c.client + ' – ' + c.tonnage + ' T').join('\n') + '\n' : '');
       } else if (type === 'SITUATION_CODIMAC') {
         const recus = DB.recusCODIMAC || [];
-        m = entete + '🏭 *SITUATION DETTE CODIMAC* – ' + date + '\n\n' +
+        const dernierRecu = recus[0];
+        m = entete + '🏭 *SITUATION DU COMPTE FOURNISSEUR CODIMAC*\n' +
+          '📅 *Date : ' + date + ' à ' + heure + '*\n\n' +
+          '📋 *DÉTAIL DES ENGAGEMENTS*\n' +
           '• Dette antérieure (' + (DB.detteActive.detteAnterieureTonnes || 73) + ' T) : ' + fmtCFA(detteAnt) + '\n' +
           '• Nouvelle commande (' + (DB.detteActive.nouvelleCommandeTonnes || 100) + ' T) : ' + fmtCFA(detteNouv) + '\n' +
-          '• Déjà payé : ' + fmtCFA(montantPaye) + '\n' +
-          '🔴 *RESTE À PAYER : ' + fmtCFA(detteTotale) + '*\n' +
-          (recus.length ? '\n🧾 *Reçus de versement* :\n' + recus.map(r => '   • ' + r.date + ' – ' + fmtCFA(r.montant) + ' (' + r.numero + ')').join('\n') + '\n' : '');
+          '• Total engagements (173 T) : ' + fmtCFA(detteAnt + detteNouv) + '\n\n' +
+          '💳 *VERSEMENTS EFFECTUÉS*\n' +
+          '• Total réglé (' + (DB.detteActive.tonnesPayees || 32) + ' T) : ' + fmtCFA(montantPaye) + '\n' +
+          (dernierRecu ? '• Dernier versement : ' + dernierRecu.numero + ' du ' + dernierRecu.date + ' (' + fmtCFA(dernierRecu.montant) + ' / ' + dernierRecu.tonnes + ' T)\n' : '') +
+          '\n🔴 *RESTE À PAYER CODIMAC : ' + fmtCFA(detteTotale) + '*\n' +
+          '📦 Équivalent restant : ' + (DB.detteActive.rapTonnes || 140.7) + ' Tonnes (soit ' + Math.round((DB.detteActive.rapTonnes || 140.7) * 20) + ' sacs CPJ-45)\n' +
+          (detteTotale === 0 ? '\n🎉 DETTE FOURNISSEUR ENTIÈREMENT SOLDÉE À 0 FCFA !\n' : '');
       } else if (type === 'STOCK_USINE') {
         const mv = ((DB.stockUsine && DB.stockUsine.mouvements) || []).slice(0, 5);
         m = entete + '📦 *STOCK USINE* – ' + date + '\n\n' +
@@ -4231,9 +4353,20 @@ function dedoublonnerCommandes(liste) {
           '• Valeur de vente : ' + fmtCFA(stockDispo * 75000) + '\n' +
           (mv.length ? '\n🔄 *Derniers mouvements* :\n' + mv.map(x => '   • ' + x.date + ' – ' + (x.type === 'ENTREE' ? '➕' : '➖') + ' ' + x.tonnage + ' T – ' + (x.motif || '')).join('\n') + '\n' : '');
       } else if (type === 'CREANCES_CLIENTS') {
-        const dus = cmds.filter(c => getRapClient(c) > 0);
+        const clientsMap = new Map();
+        cmds.forEach(c => {
+          const nom = c.client.trim();
+          if (!clientsMap.has(nom)) {
+            clientsMap.set(nom, { nom, tonnage: 0, totalVente: 0, rap: 0 });
+          }
+          const it = clientsMap.get(nom);
+          it.tonnage += Number(c.tonnage) || 0;
+          it.totalVente += Number(c.totalVente) || 0;
+          it.rap += getRapClient(c);
+        });
+        const listeDus = Array.from(clientsMap.values()).filter(c => c.rap > 0);
         m = entete + '💰 *CRÉANCES CLIENTS* – ' + date + '\n\n' +
-          (dus.length ? dus.map(c => '• *' + c.client + '* (' + c.tonnage + ' T) : reste ' + fmtCFA(getRapClient(c)) + ' / ' + fmtCFA(c.totalVente)).join('\n') : 'Aucun solde dû.') +
+          (listeDus.length ? listeDus.map(c => '• *' + c.nom + '* (' + c.tonnage + ' T) : reste ' + fmtCFA(c.rap) + ' / ' + fmtCFA(c.totalVente)).join('\n') : 'Aucun solde dû.') +
           '\n\n🟠 *TOTAL À RECEVOIR : ' + fmtCFA(creances) + '*\n' +
           '🟢 Déjà encaissé : ' + fmtCFA(encaisse) + '\n';
       } else if (type === 'VENTES_MARGES') {
@@ -4254,8 +4387,9 @@ function dedoublonnerCommandes(liste) {
     }
 
     function envoyerRapportBossMessage(type) {
-      const msg = construireMessageRapport(type);
-      if (!msg) { alert("Type de rapport inconnu."); return; }
+      // Le Boss reçoit STRICTEMENT et UNIQUEMENT la situation du fournisseur CODIMAC
+      const msg = construireMessageRapport('SITUATION_CODIMAC');
+      if (!msg) { alert("Erreur lors de la génération du rapport CODIMAC."); return; }
       window.open('https://wa.me/228' + numeroBoss() + '?text=' + encodeURIComponent(msg), '_blank');
     }
 
@@ -4322,15 +4456,17 @@ function dedoublonnerCommandes(liste) {
     }
 
     async function envoyerRapportBossPDF(type) {
+      // Le Boss reçoit STRICTEMENT et UNIQUEMENT la situation du fournisseur CODIMAC
+      const typeStrict = 'SITUATION_CODIMAC';
       const btn = document.getElementById('btn-boss-pdf');
       const libelle = btn ? btn.innerHTML : '';
       try {
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Création du PDF...</span>'; }
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Création du PDF CODIMAC...</span>'; }
         switchTab('tab-rapports');
-        genererRapport(type);
+        genererRapport(typeStrict);
         await chargerHtml2Pdf();
         const date = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
-        const nom = 'Rapport_' + type + '_' + date + '.pdf';
+        const nom = 'Situation_CODIMAC_M_EKOUE_' + date + '.pdf';
         const el = document.getElementById('printable-report');
         const blob = await html2pdf().set({
           margin: 8, filename: nom,
