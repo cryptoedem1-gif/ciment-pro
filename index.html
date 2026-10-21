@@ -380,7 +380,7 @@
                   <span id="bilan-client-essowe" class="font-bold text-amber-300">3 932 500 F</span>
                 </div>
                 <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
-                  <span class="text-slate-200">2. Dépôt Tonoukouti (40 T) :</span>
+                  <span class="text-slate-200">2. Dépôt Tonoukouti :</span>
                   <span id="bilan-client-tonoukouti" class="font-bold text-amber-300">3 240 000 F</span>
                 </div>
                 <div class="flex justify-between items-center bg-slate-900/60 px-2 py-1 rounded border border-slate-700/50">
@@ -3773,8 +3773,9 @@ function dedoublonnerCommandes(liste) {
         if (elBCreances) elBCreances.innerText = fmtCFA(creancesTotales);
 
         const getRapByNom = (nom) => {
-          const c = DB.commandesClients.find(x => x.client.toLowerCase().includes(nom.toLowerCase()));
-          return c ? fmtCFA(getRapClient(c)) : '0 FCFA';
+          const matching = DB.commandesClients.filter(x => x.client.toLowerCase().includes(nom.toLowerCase()));
+          const total = matching.reduce((acc, c) => acc + getRapClient(c), 0);
+          return fmtCFA(total);
         };
         const elEssowe = document.getElementById('bilan-client-essowe');
         if (elEssowe) elEssowe.innerText = getRapByNom('essowe');

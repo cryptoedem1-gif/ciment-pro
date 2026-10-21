@@ -248,8 +248,8 @@
       "tonnage": 60,
       "prixVenteTonne": 75000,
       "valeurCommande": 3000000,
-      "ancienneDette": 240000,
-      "totalVente": 4740000,
+      "ancienneDette": 180000,
+      "totalVente": 4680000,
       "paiements": [
         {
           "id": 1,
@@ -257,6 +257,13 @@
           "montant": 1500000,
           "mode": "Espèces / Virement",
           "ref": "Paiement 20 Tonnes réglées"
+        },
+        {
+          "id": 1792618900000,
+          "date": "20/10/2026",
+          "montant": 500000,
+          "mode": "Versement",
+          "ref": "Règlement du 20/10/2026 (500 000 F)"
         }
       ],
       "statutLivraison": "AUTONOME_SOUS_DISTRIBUTEUR",
@@ -325,7 +332,7 @@
     }
   ],
   "version": 13,
-  "lastUpdated": 1792441777475,
+  "lastUpdated": 1792618998063,
   "repertoireChauffeurs": [],
   "chauffeurs": [],
   "chauffeursSupprimes": {},
